@@ -20,7 +20,7 @@ void	fill_struct(t_all *all, char *argv[]);
 int		swap_last_characters(char *string, int size);
 int		print_string(char *string, int size);
 int		do_last_double(char *string, int size);
-int		increment_letter(int focused, char *original, char *dup);
+int		increment_letter(int focused, char *original, char *dup, int size);
 int		check_for_doubles_left(char *dup, int focused);
 int		check_n_swap_right(char *dup, int focused, char temp);
 int		order_right_letters(char *dup, int focused);

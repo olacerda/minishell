@@ -7,7 +7,7 @@ t_all *init_structure()
 	all = malloc(sizeof(t_all));
 	if (!all)
 		return (NULL);
-	*all = (t_all){0, NULL, NULL};
+	*all = (t_all){0};
 	return (all);
 }
 
@@ -15,8 +15,6 @@ void	end_structure(t_all *all, int status)
 {
 	if (!all)
 		return ;
-	if (all->original)
-		free(all->original);
 	if (all->dup)
 		free(all->dup);
 	if (all)
@@ -84,8 +82,8 @@ int	swap_last_characters(char *string, int size)
 	if (!string || !size)
 		return (0);
 	temp = string[size - 1];
-	string[size - 1] = string[size];
-	string[size] = temp;
+	string[size - 1] = string[size - 2];
+	string[size - 2] = temp;
 	return (1);
 }
 
@@ -206,8 +204,11 @@ int do_main_loop(char *original, char *string, int size)
 			else
 				left = check_for_doubles_left(string, focused);
 		}
+		if (focused < 0)
+			break ;
 		check_n_swap_right(string, focused, temp);
 		order_right_letters(string, focused);
+		focused = size - 3;
 	}
 	return (0);
 }
@@ -222,6 +223,27 @@ int	main(int argc, char *argv[])
 	if (!all)
 		return (1);
 	fill_struct(all, argv);
+
+// //--------do_last_double---------------
+// 	char *string = string_dup(all, argv[1], all->size);
+// 	printf("dup: %s\n\n", string);
+
+// 	int size = stringlenght(string);
+// 	printf("%d\n\n", size);
+	
+// 	do_last_double(string, size);
+// //-------------------------------------
+
+// //---------increment_letter---------------
+// 	int	result = 0;
+// 	printf("before:\n%s\n\n", all->dup);
+// 	result = increment_letter(2, all->original, all->dup, all->size);
+// 	printf("%d\n\n", result);
+// 	printf("after:\n%s\n\n", all->dup);
+// 	exit (1);
+// //----------------------------------------
+
 	do_main_loop(all->original, all->dup, all->size);
 	end_structure(all, 0);
+	write(1, "banan\n", 6);
 }
