@@ -36,7 +36,7 @@ char	*get_next_line(int fd)
 			x[fd].n[x[fd].i++] = x[fd].b[x[fd].s++];
 		x[fd].n[x[fd].i] = '\0';
 		free(x[fd].ln);
-		*(t_y *)&x[fd].ln = (t_y){(void *)((long)x[fd].n * (x[fd].rb > 0)), -1};
+		*(t_z *)&x[fd].ln = (t_z){(void *)((long)x[fd].n * (x[fd].rb > 0)), -1};
 	}
 	return (free((void *)((long)x[fd].n * (x[fd].rb <= 0))), x[fd].ln);
 }

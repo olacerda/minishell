@@ -1,20 +1,20 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   getnextline_FINAL.h                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
+/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 17:01:33 by olacerda          #+#    #+#             */
-/*   Updated: 2025/09/02 04:08:53 by olacerda         ###   ########.fr       */
+/*   Updated: 2025/12/07 04:59:36 by otlacerd         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_BONUS_H
-# define GET_NEXT_LINE_BONUS_H
+#ifndef GETNEXTLINE_FINAL_H
+# define GETNEXTLINE_FINAL_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 5
+#  define BUFFER_SIZE 1
 # endif
 # ifndef MAX
 #  define MAX 4000000
@@ -29,31 +29,34 @@
 typedef struct s_g
 {
 	char	*line;
+	char	*nln;
 	int		index;
-	int		start; 
+	int		garbage;
+	int		allend;
 	int		end;
-	char	*nline;
-	int		totalend;
+	int		start;
 	int		rbts;
-	char	buff[BUFFER_SIZE + 1];
-}	t_g;
+	char	buff[BUFFER_SIZE];
+	char	*garbage2;
+}			t_g;
 
 typedef struct s_w
 {
 	char	*line;
+	char	*nln;
 	int		index;
-	int		start; 
+	int		garbage;
+	int		allend;
 	int		end;
-	char	*nline;
-	int		tend;
-} t_w;
+}			t_w;
 
 typedef struct s_z
 {
-	char	*s;
+	char	*line;
+	char	*nln;
 	int		index;
-} t_z;
-
+	int		garbage;
+}			t_z;
 
 char	*get_next_line(int fd);
 

@@ -6,7 +6,7 @@
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 22:50:50 by olacerda          #+#    #+#             */
-/*   Updated: 2025/12/04 21:02:20 by otlacerd         ###   ########.fr       */
+/*   Updated: 2025/12/06 21:28:40 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 # include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
+
+typedef struct timeval	t_time;
 
 void	print_number(int number);
 
@@ -28,5 +30,6 @@ int		increment_number(int *dup, int *focused, int *array, int size, int *pos);
 int		print_array(int *array, int size);
 int		remove_number(int *dup, int *focused);
 int		check_result(int *array, int target, int focused);
+int		do_main_loop(int *array, int *dup, int size, int target);
 
 #endif

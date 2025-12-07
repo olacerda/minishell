@@ -1,17 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   powerset.c                                         :+:      :+:    :+:   */
+/*   powerset_timer.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 22:51:41 by olacerda          #+#    #+#             */
-/*   Updated: 2025/12/07 02:05:35 by otlacerd         ###   ########.fr       */
+/*   Updated: 2025/12/06 20:27:23 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "powerset.h"
 #include <sys/time.h>
+
+static long now;
+static long then;
+
+static long now_no_add;
+static long then_no_add;
+
+static long now_no_check;
+static long then_no_check;
+
 
 void	print_number(int number)
 {
@@ -22,7 +32,7 @@ void	print_number(int number)
 	}
 	if (number > 9)
 		print_number(number / 10);
-	write(1, &(char){number % 10}, 1);
+	write(1, &"0123456789"[number % 10], 1);
 }
 
 int	*create_array(char *argv[], int argc, int size)
@@ -154,6 +164,115 @@ int	check_result(int *array, int target, int focused)
 
 int	do_main_loop(int *array, int *dup, int size, int target)
 {
+	t_time time;
+	int pos;
+	int	focused;
+	int	add;
+	int	increment;
+	int	check;
+	// int number_final;
+
+	if (!array || !dup || !size)
+		return (0);
+	focused = 0;
+	pos = 0;
+	add = 0;
+	increment = 0;
+	check = 0;
+	gettimeofday(&time, NULL);
+	now = time.tv_sec;
+	while (1)
+	{
+		add = add_number(dup, array, size, &pos, &focused);
+		if (!add)
+		{
+			increment = increment_number(dup, &focused, array, size, &pos);
+			if (!increment)
+				if (!remove_number(dup, &focused))
+				{
+					gettimeofday(&time, NULL);
+					then = time.tv_sec;
+					// printf("timer: %li\n\n", then - now);
+					break ;
+				}
+		}
+		check = check_result(dup, target, focused);
+		if (check == 1)
+		{
+			print_array(dup, focused);
+			if (!remove_number(dup, &focused))
+			{
+				gettimeofday(&time, NULL);
+				then = time.tv_sec;
+				// printf("timer: %li\n\n", then - now);
+				break ;
+			}
+		}
+	}
+	return (1);
+}
+
+int	do_main_loop_no_check(int *array, int *dup, int size, int target)
+{
+	t_time time;
+	int pos;
+	int	focused;
+	int	add;
+	int	increment;
+	int	check;
+	int result;
+
+	if (!array || !dup || !size)
+		return (0);
+	focused = 0;
+	pos = 0;
+	add = 0;
+	increment = 0;
+	check = 0;
+	gettimeofday(&time, NULL);
+	now_no_check = time.tv_sec;
+	result = 0;
+	while (1)
+	{
+		add = add_number(dup, array, size, &pos, &focused);
+		if (!add)
+		{
+			result -= dup[focused - 1];
+			increment = increment_number(dup, &focused, array, size, &pos);
+			if (!increment)
+			{
+				if (!remove_number(dup, &focused))
+				{
+					gettimeofday(&time, NULL);
+					then_no_check = time.tv_sec;
+					// printf("timer: %li\n\n", then - now);
+					break ;
+				}
+			}
+			else
+				result += dup[focused - 1];
+		}
+		else
+			result += dup[focused - 1];
+		// check = check_result(dup, target, focused);
+		if (result == target)
+		{
+			print_array(dup, focused);
+			result -= dup[focused - 1];
+			if (!remove_number(dup, &focused))
+			{
+				gettimeofday(&time, NULL);
+				then_no_check = time.tv_sec;
+				break ;
+			}
+		}
+	}
+	return (1);
+}
+
+int	do_main_loop_no_add(int *array, int *dup, int size, int target)
+{
+	t_time time;
 	int pos;
 	int	focused;
 	int	add;
@@ -164,31 +283,64 @@ int	do_main_loop(int *array, int *dup, int size, int target)
 		return (0);
 	focused = 0;
 	pos = 0;
+	add = 0;
+	increment = 0;
+	check = 0;
+	gettimeofday(&time, NULL);
+	now_no_add = time.tv_sec;
+	// printf("now_no_add: %li", now_no_add);
+	// exit(1);
 	while (1)
 	{
-		add = add_number(dup, array, size, &pos, &focused);
+		add = 0;
+		// add = add_number(dup, array, size, &pos, &focused);
+		if (((focused) >= size) || ((pos) >= size))
+			add = 0;
+		else
+		{
+			dup[focused] = array[pos];
+			(pos)++;
+			(focused)++;
+			add = 1;
+		}
 		if (!add)
 		{
 			increment = increment_number(dup, &focused, array, size, &pos);
 			if (!increment)
 				if (!remove_number(dup, &focused))
+				{
+					gettimeofday(&time, NULL);
+					then_no_add = time.tv_sec;
+					// printf("timer: %li\n\n", then_no_add - now_no_add);
 					break ;
+				}
 		}
 		check = check_result(dup, target, focused);
 		if (check == 1)
 		{
 			print_array(dup, focused);
 			if (!remove_number(dup, &focused))
+			{
+				gettimeofday(&time, NULL);
+				then_no_add = time.tv_sec;
+				// printf("timer: %li\n\n", then_no_add - now_no_add);
 				break ;
+			}
 		}
 	}
 	return (1);
 }
 
+
+
 int	main(int argc, char *argv[])
 {
+	
+	system("date +\"%N\" >> log");
 	int *array;
 	int *dup;
+	int *dup1;
+	int *dup2;
 	int	target;
 	int size;
 
@@ -202,8 +354,20 @@ int	main(int argc, char *argv[])
 	dup = create_dup(size);
 	if (!dup)
 		return (free(array), 1);
+	dup1 = create_dup(size);
+	if (!dup1)
+		return (free(array), free(dup), 1);
+	dup2 = create_dup(size);
+	if (!dup2)
+		return (free(array), free(dup), free(dup1), 1);
+	do_main_loop_no_check(array, dup2, size, target);
 	do_main_loop(array, dup, size, target);
+	do_main_loop_no_add(array, dup1, size, target);
+	printf("normal: %li\n\n", then - now);
+	printf("no_add: %li\n\n", then_no_add - now_no_add);
+	printf("no_check: %li\n\n", then_no_check - now_no_check);
 	free(array);
 	free(dup);
+	system("date +\"%N\" >> log");
 }
  
