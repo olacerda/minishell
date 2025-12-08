@@ -28,6 +28,7 @@ void	end_structure(t_all *all, int status)
 void	fill_struct(t_all *all, char *argv[])
 {
 	all->original = argv[1];
+	order_string(all->original);
 	all->size = stringlenght(all->original);
 	all->dup = string_dup(all, all->original, all->size);
 	if (!all->dup)
@@ -70,6 +71,8 @@ int	print_string(char *string, int size)
 {
 	if (!string)
 		return (0);
+	// printf("size: %d\n\nstring: %s\n\n", size, string);
+	// exit (1);
 	write(1, string, size);
 	write(1, "\n", 1);
 	return (1);
@@ -104,7 +107,7 @@ int	check_for_doubles_left(char *dup, int focused)
 	if (!dup || !focused)
 		return (0);
 	index = 0;
-	while ((index < focused) && (dup[index]))
+	while ((index < focused) && (dup[focused]) && (dup[index]))
 	{
 		if (dup[index] == dup[focused])
 			return (1);
@@ -118,11 +121,11 @@ int	increment_letter(int focused, char *original, char *dup, int size)
 	int	index;
 	char target;
 
-	if (!focused || !original || !dup)
-		return (0);
+	if (!original || !dup)
+		return (-1);
 	target = dup[focused];
-	if ((focused == 0) && (target == original[size - 1]))
-			return (-1);
+	if ((target == original[size - 1]))
+			return (0);
 	index = 0;
 	while ((original[index]) && (original[index] != target))
 		index++;
@@ -131,7 +134,7 @@ int	increment_letter(int focused, char *original, char *dup, int size)
 		dup[focused] = original[index + 1];
 		return (1);
 	}
-	write(1, "ue? funcao increment_letter agindo estranho\n", 44);
+	// write(1, "ue? funcao increment_letter agindo estranho\n", 44);
 	return (1);
 }
 
@@ -140,7 +143,7 @@ int	check_n_swap_right(char *dup, int focused, char temp)
 	char target;
 	int	index;
 
-	if (!dup || !focused || !dup[focused] || !temp)
+	if (!dup || !dup[focused] || !temp)
 		return (0);
 	index = focused + 1;
 	target = dup[focused];
@@ -161,7 +164,7 @@ int	order_right_letters(char *dup, int focused)
 	char temp;
 	int	index;
 
-	if (!dup || !focused || !dup[focused])
+	if (!dup || !dup[focused])
 		return (0);
 	index = focused + 1;
 	while (dup[index])
@@ -179,38 +182,65 @@ int	order_right_letters(char *dup, int focused)
 	return (1);
 }
 
-int do_main_loop(char *original, char *string, int size)
+int do_main_loop(char *original, char *dup, int size)
 {
 	int	focused;
 	char temp;
 	int	left;
 	int	result;
 
-	if (!original || !string || !size)
+	if (!original || !dup || !size)
 		return (0);
 	focused = size - 3;
 	left = 1;
 	result = 1;
 	while (focused >= 0)
 	{
-		do_last_double(string, size);
-		temp = string[focused];
+		do_last_double(dup, size);
+		temp = dup[focused];
 		left = 1;
 		while ((focused >= 0) && (left == 1))
 		{
-			result = increment_letter(focused, original, string, size);
+			result = increment_letter(focused, original, dup, size);
 			if (!result)
+			{
+				dup[focused] = temp;
 				focused--;
+				if (focused < 0)
+					return (1) ;
+				temp = dup[focused];
+			}
 			else
-				left = check_for_doubles_left(string, focused);
+				left = check_for_doubles_left(dup, focused);			
 		}
-		if (focused < 0)
-			break ;
-		check_n_swap_right(string, focused, temp);
-		order_right_letters(string, focused);
+		check_n_swap_right(dup, focused, temp);
+		order_right_letters(dup, focused);
 		focused = size - 3;
 	}
-	return (0);
+	return (1);
+}
+
+int	order_string(char *string)
+{
+	int		index;
+	char	temp;
+
+	if (!string)
+		return (0);
+	index = 0;
+	while (string[index])
+	{
+		if ((string[index + 1]) && (string[index] > string[index + 1]))
+		{
+			temp = string[index];
+			string[index] = string[index + 1];
+			string[index + 1] = temp;
+			index = 0;
+		}
+		else
+			index++;
+	}
+	return (1);
 }
 
 int	main(int argc, char *argv[])
@@ -223,6 +253,7 @@ int	main(int argc, char *argv[])
 	if (!all)
 		return (1);
 	fill_struct(all, argv);
+	// order_string(all->dup);
 
 // //--------do_last_double---------------
 // 	char *string = string_dup(all, argv[1], all->size);
@@ -243,6 +274,9 @@ int	main(int argc, char *argv[])
 // 	exit (1);
 // //----------------------------------------
 
+	// printf("size: %d\n\noriginal: %s\ndup: %s\n", all->size, all->original, all->dup);
+	// do_last_double(all->dup, all->size);
+	// exit (1);
 	do_main_loop(all->original, all->dup, all->size);
 	end_structure(all, 0);
 	write(1, "banan\n", 6);
