@@ -1,0 +1,6 @@
+eu posso fzer
+int a = 1;
+
+exit(a)
+
+?
