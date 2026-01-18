@@ -6,7 +6,7 @@
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:56:45 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/01/18 05:44:15 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/01/18 05:55:17 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ char	**create_substring_buffer(int line, char **all_args, int *size)
 		string++;
 		(*size)++;
 	}
-	args = malloc(((*size)) * sizeof(char *));
+	args = malloc(((*size + 1)) * sizeof(char *));
 	if (!args)
 		return (NULL);
 	return (args);
@@ -102,18 +102,20 @@ void	assign_substrings(int *line, char **all_args, int *size, char **comand, cha
 {
 	int	string;
 
-	string = 1;
-	*comand = all_args[(*line++)];
+	string = 0;
+	*comand = all_args[(*line)];
 	(void)comand;
 	if (all_args[*line] == NULL)
 		return ;
-	while (string < ((*size) - 1))
+	while (string < (*size))
 	{
 		args[string] = all_args[(*line)];
+		// printf("%s\n", args[string]);
 		(*line)++;
 		string++;
 	}
 	args[string] = NULL;
+	// exit(1);
 }
 
 void	create_n_assign_node(t_comand **lst_head, char *comand, char **args)
@@ -165,24 +167,24 @@ t_comand *create_comand_list(char **all_args)
 		create_n_assign_node(&lst_head, comand, args);
 		if((all_args[line]) && (all_args[line][0] == '|'))
 			line++;
-		int	line2;
-		t_comand *temp;
-		temp = lst_head;
-		while (temp != NULL)
-		{
-			line2 = 0;
-			printf("%s\n", temp->comand);
-			if (temp->args[line2] == NULL)
-				printf("e null, line2 = %d\n", line2);
-			else
-			{
-				while(temp->args[line2])
-					printf("%s\n", temp->args[line2++]);
-			}
-			temp = temp->next;
-		}
-		write(1, "imprimiu uma vez \n", 18);
-		write(1, "\n\n\n", 3);
+	// 	int	line2;
+	// 	t_comand *temp;
+	// 	temp = lst_head;
+	// 	while (temp != NULL)
+	// 	{
+	// 		line2 = 0;
+	// 		printf("%s\n", temp->comand);
+	// 		if (temp->args[line2] == NULL)
+	// 			printf("e null, line2 = %d\n", line2);
+	// 		else
+	// 		{
+	// 			while(temp->args[line2])
+	// 				printf("%s\n", temp->args[line2++]);
+	// 		}
+	// 		temp = temp->next;
+	// 	}
+	// 	write(1, "imprimiu uma vez \n", 18);
+	// 	write(1, "\n\n\n", 3);
 	}
 	return (lst_head);
 }

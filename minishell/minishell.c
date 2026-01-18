@@ -6,7 +6,7 @@
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 23:13:10 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/01/18 05:40:09 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/01/18 05:57:19 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -497,29 +497,29 @@ int	main(int argc, char *argv[], char **envp)
 			break ;
 		args = create_args(line);
 		
-//----------------------------------------------------		
-		int line2 = 0;
-		printf("split: \n");
-		while (args[line2] != NULL)
-			printf("%s\n", args[line2++]);
-		write(1, "\n\n\n", 3);
-//----------------------------------------------------		
+// //----------------------------------------------------		
+// 		int line2 = 0;
+// 		printf("split: \n");
+// 		while (args[line2] != NULL)
+// 			printf("%s\n", args[line2++]);
+// 		write(1, "\n\n\n", 3);
+// //----------------------------------------------------		
 		// exit(1);
 		
 		all->head = create_comand_list(args);
 
-//----------------------------------------------------		
-		printf("linked-list: \n");
-		while (all->head != NULL)
-		{
-			printf("%s\n", all->head->comand);
-			line2 = 0;
-			while (all->head->args[line2])
-				printf("%s\n", all->head->args[line2++]);
-			all->head = all->head->next;
-		}
-		exit(1);
-//----------------------------------------------------		
+// //----------------------------------------------------		
+// 		printf("linked-list: \n");
+// 		while (all->head != NULL)
+// 		{
+// 			printf("%s\n", all->head->comand);
+// 			line2 = 0;
+// 			while (all->head->args[line2])
+// 				printf("%s\n", all->head->args[line2++]);
+// 			all->head = all->head->next;
+// 		}
+// 		exit(1);
+// //----------------------------------------------------		
 
 		node = all->head;
 		all->node_number = 1;

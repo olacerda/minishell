@@ -6,7 +6,7 @@
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:55:23 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/01/18 05:14:49 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/01/18 06:03:25 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,8 +185,8 @@ int	pipe_execution(t_minishellinfo *all, t_comand *node, char *argv[], char **en
 		if (node->next != NULL)
 		{
 			check_pipe = pipe(all->fd);
-			if (!check_pipe)
-				return (put_error("Error\nFailed pipe in execute_first_pipe\n"), 0);
+			if (check_pipe == -1)
+				return (put_error("Error\nFailed pipe in pipe_execution\n"), 0);
 			if (all->node_number == 1)
 				execute_first_pipe(absolute_path, argv, envp, all->fd);
 			else
