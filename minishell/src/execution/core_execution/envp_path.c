@@ -6,7 +6,7 @@
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 02:53:45 by otlacerd          #+#    #+#             */
-/*   Updated: 2025/11/11 03:31:39 by otlacerd         ###   ########.fr       */
+/*   Updated: 2025/11/14 23:56:11 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ char *find_absolute_path(char *environment_variable, char *comand, int prefix_si
 		if (!append_comand_to_path(path, comand, path_size, PATH_MAX))
 			return (NULL);
 		if (is_accessible(path, comand) == 0)
-			return (path);	
+			return (path);
 		env_idx += path_size;
 	}
 	return (NULL);
@@ -132,7 +132,7 @@ char *get_absolute_path(char *prefix, char *comand, char **envp)
 	if (!environment_variable)
 		return (put_error("Error\nFailed to get enviroment path in get_absolute_path\n"), NULL);
 	absolute_path = find_absolute_path(environment_variable, comand, prefix_size);
-	if (!absolute_path)
-		return (put_error("Error\nFailed to get absolute_path in find_absolute_path\n"), NULL);
+	// if (!absolute_path)
+	// 	return (put_error("Error\nFailed to get absolute_path in find_absolute_path\n"), NULL);
 	return (absolute_path);
 }

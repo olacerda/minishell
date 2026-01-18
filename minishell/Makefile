@@ -6,7 +6,7 @@
 #    By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/22 23:11:08 by otlacerd          #+#    #+#              #
-#    Updated: 2025/11/11 03:42:34 by otlacerd         ###   ########.fr        #
+#    Updated: 2026/01/14 18:40:54 by otlacerd         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,9 +22,12 @@ LDFLAGS = -lreadline
 all: $(NAME)
 
 SRCS =	minishell.c \
+		src/execution/core_execution/core_execution.c \
 		src/execution/core_execution/envp_path.c \
 		src/execution/core_execution/envp_prefix.c \
 		src/execution/data/data.c \
+		src/execution/data/list_functions.c \
+		src/execution/data/project_structure.c \
 		src/general_utils/utils.c \
 
 OBJS = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRCS))

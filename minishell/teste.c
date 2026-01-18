@@ -1,13 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing.h                                          :+:      :+:    :+:   */
+/*   teste.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/23 00:59:49 by otlacerd          #+#    #+#             */
-/*   Updated: 2025/11/11 23:23:34 by otlacerd         ###   ########.fr       */
+/*   Created: 2026/01/14 19:14:55 by otlacerd          #+#    #+#             */
+/*   Updated: 2026/01/14 19:19:46 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <minishell.h>
+#include <stdio.h>
+
+int	main(void)
+{
+	int a = 65;
+	// char *string = "teste abrobrinha";
+
+	printf((char *)&a);
+}

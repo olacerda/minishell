@@ -6,11 +6,11 @@
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 23:13:10 by otlacerd          #+#    #+#             */
-/*   Updated: 2025/11/11 05:26:01 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/01/18 05:40:09 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <minishell.h>
+#include "minishell.h"
 #include <core_execution.h>
 #include <data.h>
 #include <utils.h>
@@ -250,137 +250,281 @@
 // }
 
 
-int	is_comand(char *comand)
-{
-	char *reference;
-	int	index;
+// int	is_comand(char *comand)
+// {
+// 	char **references;
+// 	int	line;
+// 	int	index;
+	
+// 	if (!comand)
+// 	return (0);
+// 	references = (char *[3]){"ls", "wc", NULL};
+// 	line = 0;
+// 	index = 0;
+// 	while (references[line] != NULL)
+// 	{
+// 		index = 0;
+// 		while (comand[index] == references[line][index])
+// 			index++;
+// 		if (comand[index] == '\0')
+// 			return (1);
+// 		line++;
+// 	}
+// 	return (0);
+// }
 
-	if (!comand)
-		return (0);
-	reference = "ls";
-	index = 0;
-	while (comand[index] == reference[index])
-	{
-		index++;
-	}
-	if (comand[index] == '\0')
-		return (1);
-	return (0);
-}
+// char **create_args(char *string)
+// {
+// 	char **result;
+// 	int	line;
+// 	int	index1;
+// 	int	index2;
+// 	int	count;
 
-int	execute_comand(t_minishellinfo *all, char *comand, char *argv[], char **envp)
-{
-	int	alter_pid;
-	char *absolute_path;
+// 	if (!string)
+// 		return (NULL);
+// 	index1 = 0;
+// 	count = 0;
+// 	while (string[index1] != '\0')
+// 	{
+// 		if (string[index1] == ' ')
+// 			while ((string[index1]) && (string[index1] == ' '))
+// 				index1++;
+// 		if ((string[index1] != '\0') && (string[index1] != ' '))
+// 		{
+// 			while ((string[index1] != ' ') && (string[index1] != '\0'))
+// 				index1++;
+// 			count++;
+// 		}
+// 	}
+// 	result = malloc((count + 1) * (sizeof(char *)));
+// 	if (!result)
+// 		return (NULL);
+// 	index1 = 0;
+// 	line = 0;
+// 	while (string[index1] != '\0')
+// 	{
+// 		count = 0;
+// 		while ((string[index1] != '\0') && (string[index1] == ' '))
+// 			index1++;
+// 		if ((string[index1] != '\0') && (string[index1] != ' '))
+// 		{
+// 			index2 = index1;
+// 			while ((string[index1] != '\0') && (string[index1++] != ' '))
+// 				count++;
+// 			result[line] = malloc((count + 1) * (sizeof(char)));
+// 			if (!result[line])
+// 				return (NULL);
+// 			count = 0;
+// 			while ((string[index2] != '\0') && (string[index2] != ' '))
+// 				result[line][count++] = string[index2++];
+// 			result[line][count] = '\0';
+// 			line++;
+// 		}
+// 	}
+// 	result[line] = NULL;
+// 	return (result);
+// }
 
-	alter_pid = fork();
-	if (alter_pid < 0)
-	{
-		put_error("Error\nFailed to get a new pid in execute_coman\n");
-		return (0);
-	}
-	absolute_path = get_absolute_path(all->prefx->path, comand, envp);
-	if (!absolute_path)
-	{
-		put_error("Error\nFailed to get_absolute_path in execute_comand\n");
-		return (0);
-	}
-	if (alter_pid == 0)
-	{
-		if (!execve(absolute_path, argv, envp))
-			return (0);
-	}
-	else if (alter_pid > 0)
-		waitpid(alter_pid, NULL, 0);
-	return (1);
-}
+// void	clean_args(char **args)
+// {
+// 	int	line;
 
-// ----------------- MAIN PARA DEBUGS -------------
+// 	line = 0;
+// 	if (!args)
+// 		return ;
+// 	while (args[line] != NULL)
+// 	{
+// 		free(args[line]);
+// 		line++;
+// 	}
+// 	free(args[line]);
+// }
+
+// int	count_args(char **args)
+// {
+// 	int	line;
+
+// 	line = 0;
+// 	while (args[line] != NULL)
+// 		line++;
+// 	return (line);
+// }
+
+// int	get_pipe_position(char **args)
+// {
+// 	int	line;
+
+// 	line = 0;
+// 	while (args[line] != NULL)
+// 	{
+// 		if (args[line][0] == '|')
+// 			return (line);
+// 		line++;
+// 	}
+// 	return (-1);
+// }
+
+// int	is_builtin_or_external(t_minishellinfo *all, char *comand, char *absolute_path)
+// {
+// 	int	result;
+	
+
+// 	result = 0;
+// 	if (absolute_path)
+// 		return (2);
+// 	result = is_comand(comand);
+// 	if (result)
+// 		return (result);
+// }
+
+// int	execute_in_pipe(t_list *node)
+// {
+// 	if (node->next != NULL)
+// 		return (1);
+// 	return (0);
+// }
+
+// int	execute_comand(t_minishellinfo *all, char *comand, char *argv[], char **envp)
+// {
+// 	int	alter_pid;
+// 	char *absolute_path;
+
+// 	alter_pid = fork();
+// 	if (alter_pid < 0)
+// 	{
+// 		put_error("Error\nFailed to get a new pid in execute_coman\n");
+// 		return (0);
+// 	}
+// 	absolute_path = get_absolute_path(all->prefx->path, comand, envp);
+// 	// if (!absolute_path)
+// 	// {
+// 	// 	put_error("Error\nFailed to get_absolute_path in execute_comand\n");
+// 	// 	return (0);
+// 	// }
+// 	if (alter_pid == 0)
+// 	{
+// 		execve(absolute_path, argv, envp);
+// 		exit(130);
+// 	}
+// 	else if (alter_pid > 0)
+// 		waitpid(alter_pid, NULL, 0);
+// 	return (1);
+// }
+
+
+// int	execute_in_pipe(t_minishellinfo *all, char **args, int pipe_position)
+// {
+// 	int	fd_backup[2];
+// 	int	fds[2];
+// 	int	pipe_status;
+// 	int	fork_status;
+
+// 	fds[0] = 0;
+// 	fds[1] = 0;
+// 	fd_backup[0] = 0;
+// 	fd_backup[1] = 0;
+
+// 	fd_backup[0] = dup(0);
+// 	fd_backup[1] = dup(1);
+// 	pipe_status = pipe(fds);
+// 	if (pipe_status == -1)
+// 		return (0);
+// 	dup2(fds[1], 1);
+// 	fork_status = fork();
+// 	if (fork_status == 0)
+// 	{
+// 		execute_comand(all, args[pipe_position - 1], all->argv, all->envp);
+// 		close(fds[1]);
+// 		exit(1);
+// 	}
+// 	if (fork_status > 0)
+// 	{
+// 		wait(NULL);
+// 		close(fds[1]);
+// 		dup2(fds[0], 0);
+// 		dup2(fd_backup[1], 1);
+// 		fork_status = fork();
+// 		if (fork_status == 0)
+// 		{
+// 			execute_comand(all, args[pipe_position + 1], all->argv, all->envp);
+// 			close(fds[0]);
+// 			exit(1);
+// 		}
+// 		if (fork_status > 0)
+// 		{
+// 			wait(NULL);
+// 			dup2(fd_backup[0], 0);	
+// 		}
+// 	}
+// 	return (1);
+// }
+
+// void	fill_structures(t_minishellinfo *all, int argc, char **argv, char **envp)
+// {
+// 	if (!all)
+// 		return ;
+// 	all->argv = argv;
+// 	all->envp = envp;
+// 	all->argc = argc;
+// 	if (!get_all_prefixs(all->prefx))
+// 	{
+// 		end_structures(all);
+// 		exit (1);
+// 	}
+// }
+
+
 int	main(int argc, char *argv[], char **envp)
 {
-	int	pid;
-	char *line;
-	char *absolute_path;
-	char *enviroment_variable;
 	t_minishellinfo *all;
-
-	enviroment_variable = NULL;
-	absolute_path = NULL;
+	t_comand		*node;
+	char 			**args;
+	char 			*line;
+	int				pid;
+	
 	all = init_structures();
 	if (!all)
 		return (1);
-	
-	// int	line = -1;
-	// int	number = 0;
-	// while (envp[++line])
-	// {
-	// 	printf("Pointer number: %d\n", number++);
-	// 	printf("%s\n\n", envp[line]);
-	// }
-	
-	enviroment_variable = find_environment_variable("PATH=", envp);
-	all->enviroment_variable_path = enviroment_variable;
-	printf("enviroment variable PATH:\n%s\n\n\n", enviroment_variable);
-	if (!get_all_prefixs(all->prefx))
-	{
-		end_structures(all);
-		exit (1);
-	}
-	absolute_path = get_absolute_path(all->prefx->path, "ls", envp);
-	if (!absolute_path)
-	{
-		end_structures(all);
-		exit (1);
-	}
-	printf("Absolut path of 'LS': %s\n\n", absolute_path);
-
-
+	fill_structures(all, argc, argv, envp);
 	line = NULL;
 	pid = getpid();
 	all->father_pid = pid;
 	while (1)
 	{
-		write(1, "minishell> ", 11);
-		line = readline(NULL);
+		line = readline("minishell> ");
 		if (!line)
 			break ;
-		if (is_comand(line))
+		args = create_args(line);
+		
+//----------------------------------------------------		
+		int line2 = 0;
+		printf("split: \n");
+		while (args[line2] != NULL)
+			printf("%s\n", args[line2++]);
+		write(1, "\n\n\n", 3);
+//----------------------------------------------------		
+		// exit(1);
+		
+		all->head = create_comand_list(args);
+
+//----------------------------------------------------		
+		printf("linked-list: \n");
+		while (all->head != NULL)
 		{
-			// write(1, "\n", 1);
-			execute_comand(all, line, argv, envp);
+			printf("%s\n", all->head->comand);
+			line2 = 0;
+			while (all->head->args[line2])
+				printf("%s\n", all->head->args[line2++]);
+			all->head = all->head->next;
 		}
+		exit(1);
+//----------------------------------------------------		
+
+		node = all->head;
+		all->node_number = 1;
+		execute_comand(all, node, argv, envp, all->fd);
 		free(line);
 	}
-	
-	// if (access(absolute_path, X_OK) == 0)
-	// 	printf("Path válido e executável: %s\n", absolute_path);
-	// else
-	// 	perror("Caminho inválido");
-	(void)argv;
-	(void)argc;
-	(void)envp;
 	return (0);
 }
-
-// int	main(int argc, char *argv[], char **envp)
-// {
-	// int	pid;
-	// char *line;
-
-	// line = NULL;
-	// pid = getpid();
-	
-	// while (1)
-	// {
-	// 	write(1, "minishell> ", 11);
-	// 	line = readline(NULL);
-	// 	if (!line)
-	// 		break ;
-	// 	if (is_comand(line))
-	// 		execute_comand(line);
-	// 	free(line);
-	// }
-// 	(void)argv;
-// 	(void)argc;
-// 	(void)envp;
-// }
