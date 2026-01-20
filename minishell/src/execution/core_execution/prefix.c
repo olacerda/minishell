@@ -6,7 +6,7 @@
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 02:53:08 by otlacerd          #+#    #+#             */
-/*   Updated: 2025/11/11 03:02:24 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/01/19 12:16:50 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,13 +44,3 @@ int	compare_prefix(char *string1, char *string2)
 	}
 	return (0);
 }
-
-// //------------- compare_prefix -----------------
-// int	main(void)
-// {
-// 	char *string1 = "ola";
-// 	char *string2 = "olar isso e um teste";
-// 	int	result = compare_prefix(string1, string2);
-// 	printf("result: %d\n\n", result);
-// 	// printf("oi");
-// }

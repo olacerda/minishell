@@ -5,17 +5,17 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/14 19:14:55 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/01/14 19:19:46 by otlacerd         ###   ########.fr       */
+/*   Created: 2026/01/19 05:39:28 by otlacerd          #+#    #+#             */
+/*   Updated: 2026/01/19 05:40:59 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-
 int	main(void)
 {
-	int a = 65;
-	// char *string = "teste abrobrinha";
+	int	a;
 
-	printf((char *)&a);
+	a = 3;
+	if (a = 4)
+		a = 6;
+	return (1);
 }

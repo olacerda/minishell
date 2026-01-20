@@ -6,7 +6,7 @@
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 23:13:23 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/01/18 03:19:37 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/01/19 22:02:30 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,41 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <sys/wait.h>
+# include <stdbool.h>
+# include <sys/select.h>
+
+
+# define BUFFER_SIZE 25
+
+typedef struct	s_gnl
+{
+	int		start;
+	int		end;
+	int		readbytes;
+	char	buffer[BUFFER_SIZE + 1];
+}				t_gnl;
+
+typedef enum e_redir_type
+{
+    REDIR_INPUT = 1,
+    REDIR_OUTPUT = 2,
+    REDIR_APPEND = 3,
+    REDIR_HEREDOC = 4
+} 			t_redir_type;
+
+typedef	struct s_redirection
+{
+	t_redir_type	type;
+	char 			*redir_arg;
+	struct s_redirection	*next;
+}				t_redirection;
 
 typedef struct s_comand
 {
-	char *comand;
-	char **args;
-	struct s_comand *next;
+	char 			*comand;
+	char 			**args;
+	t_redirection	*redir;
+	struct s_comand	*next;
 }				t_comand;
 
 typedef struct s_prefix
@@ -39,20 +68,37 @@ typedef struct s_prefix
 	char *user;
 }				t_prefix;
 
+typedef	struct	s_states
+{
+	int	changed_fds;
+	int	redir_out_append;
+}				t_states;
+
+typedef struct	s_pipeinfo
+{
+	int	in;
+	int	out;
+}				t_pipeinfo;
+
 typedef struct s_minishellinfo
 {
-	t_prefix 	*prefx;
-	char 		*enviroment_variable_path;
-	int			father_pid;
+	int			argc;
 	char 		**argv;
 	char		**envp;
-	int			argc;
-	char 		**args;
-	int			node_number;
-	int			fd[2];
-	int			prev_fd_0;
+	t_prefix 	*prefx;
 	t_comand 	*head;
 	t_comand	*comand;
+	t_states	*states;
+	int			node_number;
+	int			node_count;
+	int			father_pid;
+	int			*children_pids;
+	int			fd[2];
+	int			previous_fd_0;
+	int			true_fds[2];
+	int			redir_fds[2];
+	int			last_heredoc_node;
+	int			last_heredoc_redir_node;
 }				t_minishellinfo;
 
 
@@ -71,7 +117,7 @@ typedef struct s_minishellinfo
 // void				end_structures(t_minishellinfo *all);
 // int				get_all_prefixs(t_prefix *prefix);
 // int				append_comand_to_path(char *path, char *comand, int path_idx, int path_buffer_size);
-// int					execute_comand(t_minishellinfo *all, char *comand, char *argv[], char **envp);
+// int					execute_comands(t_minishellinfo *all, char *comand, char *argv[], char **envp);
 // int					is_comand(char *comand);
 // char 			**create_args(char *string);
 // void				clean_args(char **args);
@@ -79,7 +125,7 @@ typedef struct s_minishellinfo
 // int					get_pipe_position(char **args);
 // int					is_builtin_or_external(t_minishellinfo *all, char *comand, char *absolute_path);
 // int					execute_in_pipe(t_list *node);
-// int					execute_comand(t_minishellinfo *all, char *comand, char *argv[], char **envp);
+// int					execute_comands(t_minishellinfo *all, char *comand, char *argv[], char **envp);
 // int					execute_in_pipe(t_minishellinfo *all, char **args, int pipe_position);
 // void				fill_structures(t_minishellinfo *all, int argc, char **argv, char **envp);
 

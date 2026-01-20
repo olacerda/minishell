@@ -6,7 +6,7 @@
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 02:43:11 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/01/18 01:33:55 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/01/19 23:13:34 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ void	put_error(char *problem)
 t_minishellinfo *init_structures(void)
 {
 	t_minishellinfo *all;
-	t_prefix *prefx;
 
 	all = malloc(sizeof(t_minishellinfo));
 	if (!all)
@@ -37,31 +36,51 @@ t_minishellinfo *init_structures(void)
 		return (NULL);
 	}
 	*all = (t_minishellinfo){0};
-	prefx = malloc(sizeof(t_prefix));
-	if (!prefx)
+	all->prefx = malloc(sizeof(t_prefix));
+	if (!all->prefx)
 	{
 		put_error("Error\nFaile to allocate struct 'prefx'\n");
 		end_structures(all);
 		return (NULL);
 	}
-	*prefx = (t_prefix){0};
-	all->prefx = prefx;
+	all->states = malloc(sizeof(t_states));
+	if (!all->states)
+	{
+		put_error("Error\nFailed allocation in init_structures -> all.states\n");
+		end_structures(all);
+		return (NULL);
+	}
 	return (all);
 }
 
 void	fill_structures(t_minishellinfo *all, int argc, char **argv, char **envp)
 {
-	if (!all)
+	if (!all || !argc || !argv || !envp)
 		return ;
 	all->argv = argv;
 	all->envp = envp;
 	all->argc = argc;
-	all->node_number = 1;
 	if (!get_all_prefixs(all->prefx))
 	{
 		end_structures(all);
 		exit (1);
 	}
+	all->head = NULL;
+	all->comand = NULL;
+	if (all->states == NULL)
+	*all->states = (t_states){0};
+	all->node_number = 1;
+	all->node_count = 0;
+	all->father_pid = -1;
+	all->children_pids = NULL;
+	all->fd[0] = 0;
+	all->fd[1] = 0;
+	save_original_fds(all->true_fds);
+	all->redir_fds[0] = STDIN_FILENO;
+	all->redir_fds[1] = STDOUT_FILENO;
+	all->previous_fd_0 = 0;
+	all->last_heredoc_node = 0;
+	all->last_heredoc_redir_node = 0;
 }
 
 void	end_structures(t_minishellinfo *all)
@@ -72,19 +91,4 @@ void	end_structures(t_minishellinfo *all)
 		free(all->prefx);
 	if (all)
 		free(all);
-}
-
-void	clean_args(char **args)
-{
-	int	line;
-
-	line = 0;
-	if (!args)
-		return ;
-	while (args[line] != NULL)
-	{
-		free(args[line]);
-		line++;
-	}
-	free(args[line]);
 }

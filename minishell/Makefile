@@ -6,7 +6,7 @@
 #    By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/22 23:11:08 by otlacerd          #+#    #+#              #
-#    Updated: 2026/01/14 18:40:54 by otlacerd         ###   ########.fr        #
+#    Updated: 2026/01/19 15:34:04 by otlacerd         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,10 +23,14 @@ all: $(NAME)
 
 SRCS =	minishell.c \
 		src/execution/core_execution/core_execution.c \
-		src/execution/core_execution/envp_path.c \
-		src/execution/core_execution/envp_prefix.c \
+		src/execution/core_execution/absolute_path.c \
+		src/execution/core_execution/prefix.c \
+		src/execution/core_execution/pipes.c \
+		src/execution/core_execution/pid_manegement.c \
+		src/execution/core_execution/redirections.c \
 		src/execution/data/data.c \
-		src/execution/data/list_functions.c \
+		src/execution/data/list_comand.c \
+		src/execution/data/list_redirections.c \
 		src/execution/data/project_structure.c \
 		src/general_utils/utils.c \
 

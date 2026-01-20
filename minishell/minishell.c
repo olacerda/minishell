@@ -6,7 +6,7 @@
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 23:13:10 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/01/18 05:57:19 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/01/20 00:51:32 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -385,7 +385,7 @@
 // 	return (0);
 // }
 
-// int	execute_comand(t_minishellinfo *all, char *comand, char *argv[], char **envp)
+// int	execute_comands(t_minishellinfo *all, char *comand, char *argv[], char **envp)
 // {
 // 	int	alter_pid;
 // 	char *absolute_path;
@@ -399,7 +399,7 @@
 // 	absolute_path = get_absolute_path(all->prefx->path, comand, envp);
 // 	// if (!absolute_path)
 // 	// {
-// 	// 	put_error("Error\nFailed to get_absolute_path in execute_comand\n");
+// 	// 	put_error("Error\nFailed to get_absolute_path in execute_comands\n");
 // 	// 	return (0);
 // 	// }
 // 	if (alter_pid == 0)
@@ -434,7 +434,7 @@
 // 	fork_status = fork();
 // 	if (fork_status == 0)
 // 	{
-// 		execute_comand(all, args[pipe_position - 1], all->argv, all->envp);
+// 		execute_comands(all, args[pipe_position - 1], all->argv, all->envp);
 // 		close(fds[1]);
 // 		exit(1);
 // 	}
@@ -447,7 +447,7 @@
 // 		fork_status = fork();
 // 		if (fork_status == 0)
 // 		{
-// 			execute_comand(all, args[pipe_position + 1], all->argv, all->envp);
+// 			execute_comands(all, args[pipe_position + 1], all->argv, all->envp);
 // 			close(fds[0]);
 // 			exit(1);
 // 		}
@@ -486,44 +486,65 @@ int	main(int argc, char *argv[], char **envp)
 	all = init_structures();
 	if (!all)
 		return (1);
-	fill_structures(all, argc, argv, envp);
 	line = NULL;
 	pid = getpid();
 	all->father_pid = pid;
 	while (1)
 	{
+		fill_structures(all, argc, argv, envp);
 		line = readline("minishell> ");
 		if (!line)
 			break ;
 		args = create_args(line);
 		
-// //----------------------------------------------------		
-// 		int line2 = 0;
-// 		printf("split: \n");
-// 		while (args[line2] != NULL)
-// 			printf("%s\n", args[line2++]);
-// 		write(1, "\n\n\n", 3);
-// //----------------------------------------------------		
-		// exit(1);
-		
-		all->head = create_comand_list(args);
-
-// //----------------------------------------------------		
-// 		printf("linked-list: \n");
-// 		while (all->head != NULL)
-// 		{
-// 			printf("%s\n", all->head->comand);
-// 			line2 = 0;
-// 			while (all->head->args[line2])
-// 				printf("%s\n", all->head->args[line2++]);
-// 			all->head = all->head->next;
-// 		}
+// //-------------------Imprime o SPLIT-------------------------------------
+		// int line2 = 0;
+		// printf("*****split*****: \n");
+		// while (args[line2] != NULL)
+		// 	printf("%s\n", args[line2++]);
+		// write(1, "\n\n\n", 3);
 // 		exit(1);
-// //----------------------------------------------------		
+// //---------------123---------------------------------------------------------
+
+
+		all->head = create_comand_list(args, all);
+
+
+// //------------------------Imprime a LINKED-LIST----------------------------		
+		// printf("*****linked-list: ***** \n");
+		// int	node_nbr = 1;
+		// int	redir_nbr = 1;
+		// while (all->head != NULL)
+		// {
+		// 	printf("####NODE#### %d\n", node_nbr++);
+		// 	printf("Comand: %s\n", all->head->comand);
+		// 	int line2;
+		// 	line2 = 0;
+		// 	while (all->head->args[line2])
+		// 		printf("args: %s\n", all->head->args[line2++]);
+		// 	printf("\nREDIRECOES:\n");
+		// 	while (all->head->redir != NULL)
+		// 	{
+		// 		printf("%d\n", redir_nbr++);
+		// 		printf("type: %d\narg: %s\n\n", all->head->redir->type, all->head->redir->redir_arg);
+		// 		all->head->redir = all->head->redir->next;
+		// 	}
+		// 	printf("\n\n");
+		// 	all->head = all->head->next;
+		// }
+		// write(1, "\n\n", 2);
+		// exit(1);
+// //-------------------------------------------------------------------------		
+
+		create_buffer_children_pids(&all->children_pids, all->node_count);
 
 		node = all->head;
-		all->node_number = 1;
-		execute_comand(all, node, argv, envp, all->fd);
+		all->node_number = 0;
+		execute_last_heredoc(all);
+		execute_comands(all, node, argv, envp, all->fd);
+		if (all->children_pids)
+			free(all->children_pids);
+		restore_original_fds(all, 1);
 		free(line);
 	}
 	return (0);

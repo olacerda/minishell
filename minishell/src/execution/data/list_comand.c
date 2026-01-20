@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   list_functions.c                                   :+:      :+:    :+:   */
+/*   list_comand.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 22:45:35 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/01/18 05:41:17 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/01/19 06:52:48 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <data.h>
 
-void	ft_lstadd_back(t_comand **lst, t_comand *new)
+void	comand_lstadd_back(t_comand **lst, t_comand *new)
 {
 	t_comand	*temp;
 
@@ -37,7 +37,7 @@ void	ft_lstadd_back(t_comand **lst, t_comand *new)
 	}
 }
 
-// void	ft_lstadd_front(t_comand **lst, t_comand *new)
+// void	comand_lstadd_front(t_comand **lst, t_comand *new)
 // {
 // 	if (!lst || !new)
 // 		return ;
@@ -52,7 +52,7 @@ void	del(void *content)
 	free(content);
 }
 
-void	ft_lstclear(t_comand **lst, void (*del)(void*))
+void	comand_lstclear(t_comand **lst, void (*del)(void*))
 {
 	t_comand	*temp;
 	t_comand	*nexttemp;
@@ -69,7 +69,7 @@ void	ft_lstclear(t_comand **lst, void (*del)(void*))
 	*lst = NULL;
 }
 
-t_comand	*ft_lstnew(char *comand, char **args)
+t_comand	*comand_lstnew(char *comand, char **args)
 {
 	t_comand	*new;
 
@@ -78,11 +78,12 @@ t_comand	*ft_lstnew(char *comand, char **args)
 		return (NULL);
 	new->comand = comand;
 	new->args = args;
+	new->redir = NULL;
 	new->next = NULL;
 	return (new);
 }
 
-int	ft_lstsize(t_comand *lst)
+int	comand_lstsize(t_comand *lst)
 {
 	if (!lst)
 		return (0);

@@ -6,7 +6,7 @@
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 02:54:14 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/01/18 05:13:57 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/01/20 00:19:02 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,15 +29,34 @@ int		get_all_prefixs(t_prefix *prefix);
 int		compare_prefix(char *string1, char *string2);
 
 //---------core_execution.c
-int	execute_comand(t_minishellinfo *all, t_comand *node, char *argv[], char **envp, int *fds);
-int	normal_execution(t_minishellinfo *all, t_comand *node, char *argv[], char **envp);
-int	pipe_execution(t_minishellinfo *all, t_comand *node, char *argv[], char **envp);
-int	execute_last_pipe(char *absolute_path, char *argv[], char **envp, int prev_fd_0);
-int	execute_middle_pipe(char *absolute_path, char *argv[], char **envp, int *fds, int prev_fd_0);
-int	execute_first_pipe(char *absolute_path, char *argv[], char **envp, int *fds);
+int		execute_comands(t_minishellinfo *all, t_comand *node, char *argv[], char **envp, int *fds);
+int		normal_execution(t_minishellinfo *all, t_comand *node, char *argv[], char **envp);
+int		pipe_execution(t_minishellinfo *all, t_comand *node, char *argv[], char **envp);
 
-int	execute_in_pipe(t_minishellinfo *all, char **args, int pipe_position);
-int	is_comand(char *comand);
-int	get_pipe_position(char **args);
+//--------pipes.c
+int		execute_last_pipe(char *absolute_path, char **args, char **envp, int previous_fd_0);
+int		execute_middle_pipe(char *absolute_path, char **args, char **envp, int *fds, int previous_fd_0);
+int		execute_first_pipe(char *absolute_path, char **args, char **envp, int *fds);
+int		wait_all_children(int *children_pids, int size);
+int		create_buffer_children_pids(int **children_pids, int size);
+
+//-------redirections.c
+int		execute_redirections(t_comand *node, int *fds);
+int		save_original_fds(int true_fds[2]);
+int		restore_original_fds(t_minishellinfo *all, int flag);
+int		copy_fds(int fds1[2], int fds2[2]);
+int		redir_in(t_redirection *redir, int fds[2]);
+int		redir_out(t_redirection *redir, int fds[2]);
+int		redir_append(t_redirection *redir, int fds[2]);
+int		redir_heredoc(int fds[2]);
+int		execute_last_heredoc(t_minishellinfo *all);
+int		execute_heredoc(char *end_marker, int fds[2]);
+
+
+
+// int	execute_in_pipe(t_minishellinfo *all, char **args, int pipe_position);
+// int	is_comand(char *comand);
+// int	get_pipe_position(char **args);
+
 
 #endif

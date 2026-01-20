@@ -1,0 +1,184 @@
+// { // <--------------------------LIBFT
+//   "version": "2.0.0",
+//   "tasks": [
+// 	{
+// 		"label": "Compile and Run C (with libft if exists)",
+// 		"type": "shell",
+// 		"command": "sh",
+// 		"args": [
+// 			"-c",
+// 			"if [ -f \"${fileDirname}/libft.a\" ]; then gcc -Wall -Wextra -Werror -o \"${fileDirname}/output\" \"${file}\" \"${fileDirname}/libft.a\" -I \"${fileDirname}\"; else gcc -Wall -Wextra -Werror -o \"${fileDirname}/output\" \"${file}\" -I \"${fileDirname}\"; fi && \"${fileDirname}/output\""
+// 		],
+// 		"group": {
+// 			"kind": "build",
+// 			"isDefault": true
+// 		},
+// 		"problemMatcher": [],
+// 		"detail": "Compila e executa o .c, linkando libft.a somente se existir na mesma pasta"
+// 	}
+// ]
+// }
+
+// {  // <-----------------------------PRINTF
+//   "version": "2.0.0",
+//   "tasks": [
+//     {
+//       "label": "Compile and Run C (with printlib if exists)",
+//       "type": "shell",
+//       "command": "sh",
+//       "args": [
+//         "-c",
+//         "if [ -f \"${fileDirname}/printlib.a\" ]; then gcc -Wall -Wextra -Werror -o \"${fileDirname}/output\" \"${file}\" \"${fileDirname}/printlib.a\" -I \"${fileDirname}/../headers\"; else gcc -Wall -Wextra -Werror -o \"${fileDirname}/output\" \"${file}\" -I \"${fileDirname}/../headers\"; fi && \"${fileDirname}/output\""
+//       ],
+//       "group": {
+//         "kind": "build",
+//         "isDefault": true
+//       },
+//       "problemMatcher": [],
+//       "detail": "Compila e executa o .c, linkando printlib.a se existir na mesma pasta, usando headers na pasta ../headers"
+//     }
+//   ]
+// }
+
+// <------------------------------------- MINISHELL
+// {
+//   "version": "2.0.0",
+//   "tasks": [
+//     {
+//       "label": "Compile and Run current C file (minishell)",
+//       "type": "shell",
+//       "command": "bash",
+//       "args": [
+//         "-c",
+//         "cc -Wall -Wextra -Werror -I\"${workspaceFolder}/milestone 3/minishell\" -I\"${workspaceFolder}/milestone 3/minishell/modules\" -I\"${workspaceFolder}/milestone 3/minishell/modules/execution\" -I\"${workspaceFolder}/milestone 3/minishell/modules/parsing\" -o \"${fileDirname}/output\" \"${file}\" && \"${fileDirname}/output\""
+//       ],
+//       "options": {
+//         "cwd": "${workspaceFolder}"
+//       },
+//       "group": {
+//         "kind": "build",
+//         "isDefault": true
+//       },
+//       "problemMatcher": [],
+//       "detail": "Compila e executa o arquivo C atual com cc, incluindo headers do minishell e de todos os módulos."
+//     }
+//   ]
+// }
+
+// --------------------------------- MINISHELL last-version --------
+// {
+//   "version": "2.0.0",
+//   "tasks": [
+//     {
+//       "label": "Compile and Run current C file (minishell)",
+//       "type": "shell",
+//       "command": "bash",
+//       "args": [
+//         "-c",
+//         "cc -Wall -Wextra -Werror -I\"${workspaceFolder}/milestone 3/minishell\" -I\"${workspaceFolder}/milestone 3/minishell/modules\" -I\"${workspaceFolder}/milestone 3/minishell/modules/execution\" -I\"${workspaceFolder}/milestone 3/minishell/modules/parsing\" -o \"${fileDirname}/output\" \"${file}\" && \"${fileDirname}/output\""
+//       ],
+//       "options": {
+//         "cwd": "${workspaceFolder}"
+//       },
+//       "group": {
+//         "kind": "build",
+//         "isDefault": true
+//       },
+//       "presentation": {
+//         "echo": false,
+//         "reveal": "always",
+//         "focus": true,
+//         "panel": "shared",
+//         "showReuseMessage": false
+//       },
+//       "problemMatcher": [],
+//       "detail": "Compila e executa o arquivo C atual com cc, incluindo headers do minishell e de todos os módulos."
+//     }
+//   ]
+// }
+
+// //------------- minishell-------com -WALL -EXTRA -ERROR
+// {
+//   "version": "2.0.0",
+//   "tasks": [
+//     {
+//       "label": "Compile and Run current C file (minishell)",
+//       "type": "shell",
+//       "command": "bash",
+//       "args": [
+//         "-c",
+//         "cc -Wall -Wextra -Werror -I\"${workspaceFolder}/milestone 3/minishell\" -I\"${workspaceFolder}/milestone 3/minishell/modules\" -I\"${workspaceFolder}/milestone 3/minishell/modules/execution\" -I\"${workspaceFolder}/milestone 3/minishell/modules/parsing\" -o \"${fileDirname}/output\" \"${file}\" && echo \"\n\n::::::::::::::::::::::::::::::\n::TERMINAL Standard Output :::\n::::::::::::::::::::::::::::::\n\n\n\" && \"${fileDirname}/output\""
+//       ],
+//       "options": {
+//         "cwd": "${workspaceFolder}"
+//       },
+//       "group": {
+//         "kind": "build",
+//         "isDefault": true
+//       },
+//       "presentation": {
+//         "echo": false,
+//         "reveal": "always",
+//         "focus": true,
+//         "panel": "shared",
+//         "showReuseMessage": false
+//       },
+//       "problemMatcher": [],
+//       "detail": "Compila e executa o arquivo C atual com cc, incluindo headers do minishell e de todos os módulos."
+//     }
+//   ]
+// }
+
+
+// -------------- MINISHELL "CONTROL_SHIFT_M"----------
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Compile and Run current C file (minishell)",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "cc -I\"${workspaceFolder}/milestone 3/minishell\" -I\"${workspaceFolder}/milestone 3/minishell/modules\" -I\"${workspaceFolder}/milestone 3/minishell/modules/execution\" -I\"${workspaceFolder}/milestone 3/minishell/modules/parsing\" -o \"${fileDirname}/output\" \"${file}\" && echo \"\n\n::::::::::::::::::::::::::::::::\n::: TERMINAL Standard Output :::\n::::::::::::::::::::::::::::::::\n\n\n\" && \"${fileDirname}/output\""
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": false,
+        "reveal": "always",
+        "focus": true,
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "problemMatcher": [],
+      "detail": "Compila e executa o arquivo C atual com cc, incluindo headers do minishell e de todos os módulos."
+    },
+    {
+      "label": "Make and Run",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "make && ./minishell"
+      ],
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new",
+        "showReuseMessage": false
+      },
+      "problemMatcher": []
+    }
+  ]
+}
