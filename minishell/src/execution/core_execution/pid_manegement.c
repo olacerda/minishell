@@ -6,7 +6,7 @@
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 12:15:59 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/01/19 12:16:18 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/01/22 19:29:53 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	create_buffer_children_pids(int **children_pids, int size)
 	*children_pids = malloc(size * sizeof(int));
 	while (index < size)
 	{
-		(*children_pids)[index] = 0;
+		(*children_pids)[index] = -1;
 		index++;
 	}
 	return (1);

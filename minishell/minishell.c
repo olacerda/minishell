@@ -6,7 +6,7 @@
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 23:13:10 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/01/20 00:51:32 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/01/22 19:28:36 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -509,6 +509,8 @@ int	main(int argc, char *argv[], char **envp)
 
 		all->head = create_comand_list(args, all);
 
+		// printf("last node: %d     last redir: %d\n\n", all->last_heredoc_node, all->last_heredoc_redir_node);
+		// exit(1);
 
 // //------------------------Imprime a LINKED-LIST----------------------------		
 		// printf("*****linked-list: ***** \n");
@@ -517,12 +519,14 @@ int	main(int argc, char *argv[], char **envp)
 		// while (all->head != NULL)
 		// {
 		// 	printf("####NODE#### %d\n", node_nbr++);
-		// 	printf("Comand: %s\n", all->head->comand);
+		// 	printf("COMAND: %s\n", all->head->comand);
 		// 	int line2;
 		// 	line2 = 0;
 		// 	while (all->head->args[line2])
-		// 		printf("args: %s\n", all->head->args[line2++]);
+		// 		printf("args:----%s\n", all->head->args[line2++]);
 		// 	printf("\nREDIRECOES:\n");
+		// 	if (all->head->redir == NULL)
+		// 		printf("NULL\n");
 		// 	while (all->head->redir != NULL)
 		// 	{
 		// 		printf("%d\n", redir_nbr++);
@@ -537,14 +541,15 @@ int	main(int argc, char *argv[], char **envp)
 // //-------------------------------------------------------------------------		
 
 		create_buffer_children_pids(&all->children_pids, all->node_count);
-
 		node = all->head;
 		all->node_number = 0;
-		execute_last_heredoc(all);
-		execute_comands(all, node, argv, envp, all->fd);
+		execute_all_heredocs(all);
+		execute_comands(all, node, argv, envp);
 		if (all->children_pids)
 			free(all->children_pids);
 		restore_original_fds(all, 1);
+		if (all->here_doc_fd != -1)
+			close(all->here_doc_fd);
 		free(line);
 	}
 	return (0);

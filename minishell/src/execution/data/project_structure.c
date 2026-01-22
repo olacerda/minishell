@@ -6,7 +6,7 @@
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:56:45 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/01/19 20:18:14 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/01/22 16:38:05 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,12 +221,13 @@ int	create_n_assign_lst_redirection(t_comand *head, t_minishellinfo *all, char *
 	t_redir_type	type;
 	int				node_number;
 	t_comand		*node;
+	int				redir_nbr;
 
 	if (!head || !all_args)
 		return (0);
 	node = head;
 	node_number = 0;
-	all->last_heredoc_redir_node = 0;
+	redir_nbr = 0;
 	while (node_number++ < (all->node_count - 1))
 		node = node->next;
 	while ((all_args[string] != NULL) && (all_args[string][0] != '|'))
@@ -238,12 +239,14 @@ int	create_n_assign_lst_redirection(t_comand *head, t_minishellinfo *all, char *
 				all->last_heredoc_node = all->node_count;
 			if (create_n_assign_node_redirection(&(node->redir), all_args, string)
 				&& (type == REDIR_HEREDOC))
-				all->last_heredoc_redir_node++;
+				redir_nbr++;
 			string += 2;
 		}
 		else
 			string++;
 	}
+	if (redir_nbr > 0)
+		all->last_heredoc_redir_node = redir_nbr;
 	return (1);
 }
 

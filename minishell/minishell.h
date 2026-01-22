@@ -6,7 +6,7 @@
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 23:13:23 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/01/19 22:02:30 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/01/21 08:04:46 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ typedef struct s_minishellinfo
 	int			previous_fd_0;
 	int			true_fds[2];
 	int			redir_fds[2];
+	int			here_doc_fd;
 	int			last_heredoc_node;
 	int			last_heredoc_redir_node;
 }				t_minishellinfo;

@@ -6,7 +6,7 @@
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 12:12:31 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/01/19 12:20:11 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/01/22 20:05:24 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ int	execute_first_pipe(char *absolute_path, char **args, char **envp, int *fds)
 
 	if (!absolute_path || !args || !envp)
 		return (0);
+	// printf("execute first pipe\n");
 	pid = fork();
 	if (pid < 0)
 		return (put_error("Error\nFailed fork in execute_first_pipe\n"), 0);
@@ -40,6 +41,7 @@ int	execute_middle_pipe(char *absolute_path, char **args, char **envp, int *fds,
 
 	if (!absolute_path || !args || !envp)
 		return (0);
+	// printf("execute middle pipe\n"); 
 	pid = fork();
 	if (pid < 0)
 		return (put_error("Error\nFailed fork in execute_first_pipe\n"), 0);

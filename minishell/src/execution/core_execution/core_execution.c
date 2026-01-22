@@ -6,7 +6,7 @@
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:55:23 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/01/20 00:58:44 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/01/22 22:03:11 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	normal_execution(t_minishellinfo *all, t_comand *node, char **args, char **e
 	if (!all || !node || !args || !envp)
 		return (0);
 	absolute_path = get_absolute_path(all->prefx->path, node->comand, envp);
-	execute_redirections(node, all->redir_fds);
+	execute_redirections(node, all->redir_fds, all->fd, all);
 	pid = fork();
 	if (pid < 0)
 		return (put_error("Error\nFailed normal_execution\n"), 0);
@@ -34,7 +34,7 @@ int	normal_execution(t_minishellinfo *all, t_comand *node, char **args, char **e
 	return (1);
 }
 
-int	execute_redirections(t_comand *node, int *fds)
+int	execute_redirections(t_comand *node, int redir_fds[2], int pipe_fds[2], t_minishellinfo *all)
 {
 	t_redirection	*redir;
 	
@@ -43,14 +43,24 @@ int	execute_redirections(t_comand *node, int *fds)
 	redir = node->redir;
 	while (redir != NULL)
 	{
+		if ((node->next != NULL) && (redir->type == REDIR_OUTPUT || redir->type == REDIR_APPEND))
+		{
+			redir_fds[1] = pipe_fds[1];
+			dprintf(all->true_fds[1], "Trucando redir: %d pelo pipe\n", redir->type);
+		}
+		if (all->previous_fd_0 != -1 && (redir->type == REDIR_HEREDOC || redir->type == REDIR_INPUT))
+		{
+			dprintf(all->true_fds[1], "Truncando redir: %d por pipe\n", redir->type);
+			redir_fds[0] = all->previous_fd_0;
+		}
 		if (redir->type == REDIR_OUTPUT)
-			redir_out(redir, fds);
+			redir_out(redir, redir_fds, all);
 		else if (redir->type == REDIR_INPUT)
-			redir_in(redir, fds);
+			redir_in(redir, redir_fds);
 		else if (redir->type == REDIR_APPEND)
-			redir_append(redir, fds);
+			redir_append(redir, redir_fds);
 		else if (redir->type == REDIR_HEREDOC)
-			redir_heredoc(fds);
+			redir_heredoc(redir_fds, 0, all, redir);
 		redir = redir->next;
 	}
 	return (1);
@@ -68,38 +78,41 @@ int	pipe_execution(t_minishellinfo *all, t_comand *node, char *argv[], char **en
 		return (0);
 	while (node != NULL)
 	{
+		restore_original_fds(all, 0);
 		absolute_path = get_absolute_path(all->prefx->path, node->comand, envp);
 		if (node->next != NULL)
 		{
 			check_pipe = pipe(all->fd);
 			if (check_pipe == -1)
 				return (put_error("Error\nFailed pipe in pipe_execution\n"), 0);
-			if (node->redir != NULL && (node->redir->type == REDIR_OUTPUT || node->redir->type == REDIR_APPEND))
-				copy_fds(all->redir_fds, all->fd);
-			execute_redirections(node, all->redir_fds);
-			if (all->node_number == 0)
-				pid = execute_first_pipe(absolute_path, node->args, envp, all->fd);
-			else
-				pid = execute_middle_pipe(absolute_path, node->args, envp, all->fd, all->previous_fd_0);
-			all->previous_fd_0 = all->fd[0];
 		}
-		else if (node != NULL)
+		pid = 0;
+		execute_redirections(node, all->redir_fds, all->fd, all);
+		if (all->node_number == 0)
+			pid = execute_first_pipe(absolute_path, node->args, envp, all->fd);
+		else if (node->next == NULL)
+		{
+			dprintf(all->true_fds[1], "executing last pipe\n");
 			pid = execute_last_pipe(absolute_path, node->args, envp, all->previous_fd_0);
-		all->children_pids[all->node_number] = pid;
+		}
+		else if (all->node_number > 0)
+			pid = execute_middle_pipe(absolute_path, node->args, envp, all->fd, all->previous_fd_0);
+		all->children_pids[all->node_number++] = pid;
+		all->previous_fd_0 = all->fd[0];
+		// dup2(all->fd[0], all->previous_fd_0);
 		node = node->next;
-		all->node_number++;		
  	}
 	return (1);
 }
 
-int	execute_comands(t_minishellinfo *all, t_comand *node, char *argv[], char **envp, int *fds)
+int	execute_comands(t_minishellinfo *all, t_comand *node, char *argv[], char **envp)
 {
-	if (!all || !node || !argv || !envp || !fds)
+	if (!all || !node || !argv || !envp)
 		return (0);
 	if (node->next != NULL)
 		pipe_execution(all, node, argv, envp);
 	else
-		normal_execution(all, node, node->args, envp);	
+		normal_execution(all, node, node->args, envp);
 	wait_all_children(all->children_pids, all->node_count);
 	return (1);
 }

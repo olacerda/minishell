@@ -6,7 +6,7 @@
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 02:43:11 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/01/19 23:13:34 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/01/21 09:21:10 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	fill_structures(t_minishellinfo *all, int argc, char **argv, char **envp)
 	all->comand = NULL;
 	if (all->states == NULL)
 	*all->states = (t_states){0};
-	all->node_number = 1;
+	all->node_number = 0;
 	all->node_count = 0;
 	all->father_pid = -1;
 	all->children_pids = NULL;
@@ -78,9 +78,10 @@ void	fill_structures(t_minishellinfo *all, int argc, char **argv, char **envp)
 	save_original_fds(all->true_fds);
 	all->redir_fds[0] = STDIN_FILENO;
 	all->redir_fds[1] = STDOUT_FILENO;
-	all->previous_fd_0 = 0;
+	all->previous_fd_0 = -1;
 	all->last_heredoc_node = 0;
-	all->last_heredoc_redir_node = 0;
+	all->last_heredoc_node = 0;
+	all->here_doc_fd = -1;
 }
 
 void	end_structures(t_minishellinfo *all)
