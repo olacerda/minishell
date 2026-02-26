@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 23:13:23 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/02/16 06:29:09 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/02/26 10:16:37 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,11 @@
 
 # define BUFFER_SIZE 25
 # define ENV_INCREMENT 10
+# define DOT 0
+# define DOUBLE_DOT 1
+# define DASH 2
+# define TILDE 3
+# define SLASH 4
 
 typedef struct	s_gnl
 {
@@ -69,6 +74,7 @@ typedef struct s_prefix
 	char *user;
 }				t_prefix;
 
+
 // typedef	struct	s_states
 // {
 // 	int	changed_fds;
@@ -95,7 +101,7 @@ typedef struct s_my_envp
 }				t_env;
 
 
-typedef int (func_pointer)(char **envp);
+typedef int (func_pointer)(char **envp, char **args);
 
 typedef	struct s_comand_origin
 {

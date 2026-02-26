@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+         #
+#    By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/22 23:11:08 by otlacerd          #+#    #+#              #
-#    Updated: 2026/02/13 22:15:01 by otlacerd         ###   ########.fr        #
+#    Updated: 2026/02/26 02:45:08 by olacerda         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,6 +34,8 @@ SRCS =	minishell.c \
 		src/execution/data/project_structure.c \
 		src/general_utils/utils.c \
 		src/execution/built-ins/env.c \
+		src/execution/built-ins/echo.c \
+		src/execution/built-ins/cd.c \
 
 OBJS = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRCS))
 

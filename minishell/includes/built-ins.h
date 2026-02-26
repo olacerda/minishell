@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   built-ins.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 22:17:42 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/02/16 03:46:34 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/02/26 10:49:59 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,10 @@ int		env_remove(t_env *env_st, char *key);
 int		env_show(char **envp);
 int		env_find(char *key, char **envp);
 int		env_update(char **envp, char *key, char *new_value);
+
+int		built_echo(char **envp, char **args);
+int		built_env(char **envp, char **args);
+int		built_cd(char **envp, char **args);
 
 
 // int		env(void);

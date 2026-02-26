@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 12:22:13 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/02/13 22:32:54 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/02/26 05:43:06 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,8 +174,11 @@ int	restore_original_fds(t_minishellinfo *all, int flag)
 		return (0);
 	all->redir_fds[0] = STDIN_FILENO;
 	all->redir_fds[1] = STDOUT_FILENO;
+	all->fd[1] = -1;
+	all->fd[0] = -1;
 	dup2(all->true_fds[0], all->redir_fds[0]);
 	dup2(all->true_fds[1], all->redir_fds[1]);
+	// dup2(all->true_fds[0], all->previous_fd_0);
 	// dup2(all->true_fds[0], all->redir_fds[0]);
 	// dup2(all->true_fds[1], all->redir_fds[1]);
 	if (flag == 1)

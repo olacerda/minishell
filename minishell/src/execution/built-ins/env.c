@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 22:13:30 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/02/16 04:46:40 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/02/26 03:22:39 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,13 @@ int	assign_env_struct(t_minishellinfo *all)
 	return (1);
 }
 
-// int	env()
-// {
-	
-// }
+int	built_env(char **envp, char **args)
+{
+	(void)args;
+	if (!envp)
+		return (0);
+	// printf("\n\n\nentrou na funcao built env\n\n\n");
+	env_show(envp);
+	// printf("\n\n\nentrou na funcao built env\n\n\n");
+	return (1);	
+}
