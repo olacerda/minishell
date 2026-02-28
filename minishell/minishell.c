@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 02:20:46 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/02/26 02:34:44 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/02/28 06:34:09 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ int	main(int argc, char *argv[], char **envp)
 	line = NULL;
 	pid = getpid();
 	all->father_pid = pid;
+	all->my_env->envp = NULL;
 	while (1)
 	{		
 		fill_structures(all, argc, argv, envp);

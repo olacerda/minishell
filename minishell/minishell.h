@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 23:13:23 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/02/26 10:16:37 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/02/28 06:01:14 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ typedef struct s_my_envp
 }				t_env;
 
 
-typedef int (func_pointer)(char **envp, char **args);
+typedef int (func_pointer)(char **envp, t_comand *node, t_env *env);
 
 typedef	struct s_comand_origin
 {

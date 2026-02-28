@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 22:13:30 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/02/26 03:22:39 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/02/28 12:11:09 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int	env_add(t_env *env_st, int line, char *key, char *string)
 {
 	int	size;
 
-	if (!env_st || !env_st->envp || !key || !string)
+	if (!env_st || !env_st->envp || !key)
 		return (0);
 	if (line >= env_st->capacity)
 	{
@@ -69,13 +69,17 @@ int	env_add(t_env *env_st, int line, char *key, char *string)
 		env_st->capacity = env_st->size + ENV_INCREMENT;
 	}
 	size = (string_lenght(key) + string_lenght(string));
+	free(env_st->envp[line]);
 	env_st->envp[line] = malloc((size + 1) * sizeof(char));
 	if (!env_st->envp[line])
 		return (0);
 	string_copy(env_st->envp[line], key);
 	string_cat(env_st->envp[line], size, string);
-	env_st->envp[++line] = NULL;
-	env_st->size = line;
+	if (line >= env_st->size)
+	{
+		env_st->envp[++line] = NULL;
+		env_st->size = line;
+	}
 	return (1);	
 }
 
@@ -109,18 +113,31 @@ int	env_remove(t_env *env_st, char *key)
 	return (0);
 }
 
-int	env_show(char **envp)
+int	env_show(char **envp, int is_export)
 {
 	int	line;
+	int	size;
 
 	if (!envp)
 		return (0);
-	line = 0;
-	while (envp[line])
+	line = -1;
+	while (envp[++line])
 	{
-		put_string(envp[line]);
+		if (is_export == true)
+			write(1, "export ", 7);
+		size = 0;
+		while (envp[line][size] && (envp[line][size] != '='))
+			size++;
+		write(1, envp[line], size);
+		if (envp[line][size] == '=')
+		{
+			write(STDOUT_FILENO, &envp[line][size++], 1);
+			(void)((is_export == true) && (write(STDOUT_FILENO, "\"", 1)));
+			while(envp[line][size])
+				write(1, &envp[line][size++], 1);
+			(void)((is_export == true) && (write(STDOUT_FILENO, "\"", 1)));
+		}
 		write(1, "\n", 1);
-		line++;
 	}
 	return (1);
 }
@@ -141,32 +158,33 @@ int	env_find(char *key, char **envp)
 	return (-1);
 }
 
-int	env_update(char **envp, char *key, char *new_value)
+int	env_update(t_env *env_st, char *key, char *new_value1, char *new_value2)
 {
+	char *result;
 	int	line;
-	int	value_size;
-	int	key_size;
+	int	total_size;
 
-	if (!key || !envp || !new_value)
+	if (!key || !env_st->envp)
 		return (0);
-	line = env_find(key, envp);
+	result = NULL;
+	line = env_find(key, env_st->envp);
 	if (line == -1)
-		return (0);
-	value_size = 0;
-	while (new_value[value_size] != '\0')
-		value_size++;
-	key_size = 0;
-	while (key[key_size] != '\0')
-		key_size++;
-	free(envp[line]);
-	envp[line] = malloc((key_size + value_size + 1) * sizeof(char));
-	if (!envp[line])
-		return (0);
-	clear_string(envp[line], (key_size + value_size + 1));
-	string_cat(envp[line], (key_size + value_size + 1), key);
-	string_cat(envp[line], (key_size + value_size + 1), new_value);
+		line = env_st->size;
+	total_size = 0;
+	total_size += string_lenght(new_value1);
+	total_size += string_lenght(new_value2);
+	if (total_size > 0)
+	{
+		result = malloc((total_size + 1) * sizeof(char));
+		if (!result)
+			return (0);
+	}
+	clear_string(result, (total_size + 1));
+	string_cat(result, (total_size + 1), new_value1);
+	string_cat(result, (total_size + 1), new_value2);
+	env_add(env_st, line, key, result);
+	free(result);
 	return (1);
-	return (0);
 }
 
 int	assign_env_struct(t_minishellinfo *all)
@@ -176,7 +194,6 @@ int	assign_env_struct(t_minishellinfo *all)
 	if (!all || !all->my_env)
 		return (0);
 	capacity = 0;
-	// all->my_env->envp = create_env((char *[]){"Oi", "Meu chapa", NULL}, &capacity);
 	all->my_env->envp = create_env(all->envp, &capacity);
 	if (!all->my_env->envp)
 		return (0);
@@ -185,13 +202,17 @@ int	assign_env_struct(t_minishellinfo *all)
 	return (1);
 }
 
-int	built_env(char **envp, char **args)
+int	built_env(char **envp, t_comand *node, t_env *env)
 {
-	(void)args;
 	if (!envp)
 		return (0);
-	// printf("\n\n\nentrou na funcao built env\n\n\n");
-	env_show(envp);
-	// printf("\n\n\nentrou na funcao built env\n\n\n");
+	(void)node;
+	(void)env;
+	env_show(envp, 0);
 	return (1);	
 }
+
+// int	env()
+// {
+	
+// }

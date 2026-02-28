@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 02:43:11 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/02/26 04:19:14 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/02/28 06:34:37 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,8 @@ void	fill_structures(t_minishellinfo *all, int argc, char **argv, char **envp)
 	all->heredoc_last_node = 0;
 	all->heredoc_last_node = 0;
 	all->here_doc_fd = -1;
-	assign_env_struct(all);
+	if (all->my_env->envp == NULL)
+		assign_env_struct(all);
 }
 
 void	end_structures(t_minishellinfo *all)

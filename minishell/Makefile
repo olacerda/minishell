@@ -6,7 +6,7 @@
 #    By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/22 23:11:08 by otlacerd          #+#    #+#              #
-#    Updated: 2026/02/26 02:45:08 by olacerda         ###   ########.fr        #
+#    Updated: 2026/02/28 06:05:35 by olacerda         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,8 +34,11 @@ SRCS =	minishell.c \
 		src/execution/data/project_structure.c \
 		src/general_utils/utils.c \
 		src/execution/built-ins/env.c \
+		src/execution/built-ins/exit.c \
+		src/execution/built-ins/export.c \
+		src/execution/built-ins/unset.c \
 		src/execution/built-ins/echo.c \
-		src/execution/built-ins/cd.c \
+ 		src/execution/built-ins/cd.c \
 
 OBJS = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRCS))
 

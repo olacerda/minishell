@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 02:54:14 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/02/26 09:39:10 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/02/28 11:55:05 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int				node_execution(t_minishellinfo *all, t_comand *node, char *argv[], char *
 int				get_comand_origin(char *prefix, char *comand, char **envp, t_comand_origin *origin);
 func_pointer 	*get_built_in(char *comand);
 int				execute_external_comand(char *absolute_path, char **args, char **envp, int *fds);
-int				execute_built_in(t_comand_origin *origin, char **envp, char **args);
+int				execute_built_in(t_comand_origin *origin, t_comand *node, t_env *env);
 int				execute_redirections(t_comand *node, int redir_fds[2], int pipe_fds[2], t_minishellinfo *all);
 int				adjust_pipe_fds(t_comand *node, int previous_fd_0, int *redir_fd, int *pipe_fd);
 

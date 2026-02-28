@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 02:47:45 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/02/16 04:00:49 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/02/28 11:51:30 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@ int	clear_string(char *string, int size)
 {
 	int	index;
 
-	index = 0;
-	if (!string || !size)
+	if (!string || (size <= 0))
 		return (0);
+	index = 0;
 	while (index < size)
 	{
 		string[index] = '\0';
@@ -39,7 +39,7 @@ int	string_lenght(char *string)
 	return (size);
 }
 
-int	put_string(char *string)
+int	print_string(char *string)
 {
 	int	size;
 
@@ -226,4 +226,15 @@ void	*re_allocker(void *pointer, long size, long new_size, long type_size)
 		((char *)new_pointer)[x1] = ((char *)pointer)[x2];
 	free(pointer);
 	return (new_pointer);
+}
+int	swap_strings(char **str1, char **str2)
+{
+	char *temp;
+
+	if (!str1 || !str2)
+		return (0);
+	temp = *str1;
+	*str1 = *str2;
+	*str2 = temp;
+	return (1);
 }

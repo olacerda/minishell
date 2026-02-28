@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 04:34:05 by olacerda          #+#    #+#             */
-/*   Updated: 2026/02/26 11:21:59 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/02/28 11:20:04 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	normal_execution(t_minishellinfo *all, t_comand *node, char **args, char **e
 	return (1);
 }
 
-int	sync_redirection_to_pipe(t_comand *node, int previous_fd_0, int *redir_fd, int *pipe_fd)
+int	sync_redirection_and_pipe(t_comand *node, int previous_fd_0, int *redir_fd, int *pipe_fd)
 {
 	if (!node || !node->redir || !redir_fd || !pipe_fd)
 		return (0);
@@ -52,13 +52,9 @@ int	execute_redirections(t_comand *node, int redir_fds[2], int pipe_fds[2], t_mi
 	if (!node || !node->redir)
 		return (0);
 	redir = node->redir;
-	sync_redirection_to_pipe(node, all->previous_fd_0, redir_fds, pipe_fds);
+	sync_redirection_and_pipe(node, all->previous_fd_0, redir_fds, pipe_fds);
 	while (redir != NULL)
 	{
-		// if ((node->next != NULL) && (redir->type == REDIR_OUTPUT || redir->type == REDIR_APPEND))
-		// 	redir_fds[1] = pipe_fds[1];
-		// if (all->previous_fd_0 != -1 && (redir->type == REDIR_HEREDOC || redir->type == REDIR_INPUT))
-		// 	redir_fds[0] = all->previous_fd_0;
 		if (redir->type == REDIR_OUTPUT)
 			redir_out(redir, redir_fds, all);
 		else if (redir->type == REDIR_INPUT)
@@ -72,25 +68,22 @@ int	execute_redirections(t_comand *node, int redir_fds[2], int pipe_fds[2], t_mi
 	return (1);
 }
 
-int	built_exit(char **envp, char **args)
-{
-	(void)envp;
-	(void)args;
-	if (!envp)
-		return (0);
-	return (exit(1), 1);
-}
-
 func_pointer *get_built_in(char *comand)
 {
 	if (string_compare(comand, "exit") == 0)
 		return (built_exit);
+	else if (string_compare(comand, "env") == 0)
+		return (built_env);
+	else if (string_compare(comand, "export") == 0)
+		return (built_export);
+	else if (string_compare(comand, "unset") == 0)
+		return (built_unset);
 	else if (string_compare(comand, "echo") == 0)
 		return (built_echo);
 	else if (string_compare(comand, "cd") == 0)
-		return (write(1, "meu cd\n", 7), built_cd);
-	else if (string_compare(comand, "env") == 0)
-		return (built_env);
+		return (built_cd);
+	else if (string_compare(comand, "pwd") == 0)
+		return (write(1, "Built-In not done yet\n", 22), NULL);
 	return (NULL);	
 }
 
@@ -107,11 +100,11 @@ int	get_comand_origin(char *prefix, char *comand, char **envp, t_comand_origin *
 	return (1);
 }
 
-int	execute_built_in(t_comand_origin *origin, char **envp, char **args)
+int	execute_built_in(t_comand_origin *origin, t_comand *node, t_env *env)
 {
-	if (!origin || !envp || !args)
+	if (!origin || !node || !env)
 		return (0);
-	origin->built_in(envp, args);
+	origin->built_in(env->envp, node, env);
 	return (1);
 }
 
@@ -162,7 +155,7 @@ int	node_execution(t_minishellinfo *all, t_comand *node, char *argv[], char **en
 		execute_pipes(all->fd);
 		get_comand_origin(all->prefx->path, node->comand, envp, &origin);
 		if (origin.built_in != NULL)
-			execute_built_in(&origin, envp, node->args);
+			execute_built_in(&origin, node, all->my_env);
 		else if (origin.absolute_path != NULL)
 			pid = execute_external_comand(origin.absolute_path, node->args, envp, all->fd);
 		all->children_pids[all->node_number++] = pid;
