@@ -1,0 +1,5 @@
+1- export → mostra tudo em ordem alfabética, com "export" no início
+2- export VAR → adiciona essa variável (valor vazio se não existir)
+3- export VAR=value → cria ou altera o valor de uma key existente
+4- export VAR+=value → concatena ao valor de uma key existente; se não existir, cria e coloca o valor
+5- export VAR1=value VAR2=value VAR3=value → executa multiplos argumentos no mesmo export
