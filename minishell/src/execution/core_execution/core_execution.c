@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 04:34:05 by olacerda          #+#    #+#             */
-/*   Updated: 2026/02/28 11:20:04 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/02/28 12:52:15 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,10 +170,6 @@ int	execute_comands(t_minishellinfo *all, t_comand *node, char *argv[], char **e
 	if (!all || !node || !argv || !envp)
 		return (0);
 	node_execution(all, node, argv, envp);
-	// if (node->next != NULL)
-	// 	node_execution(all, node, argv, envp);
-	// else
-	// 	normal_execution(all, node, node->args, envp);
 	wait_all_children(all->children_pids, all->node_count);
 	return (1);
 }
