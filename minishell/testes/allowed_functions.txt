@@ -1,0 +1,24 @@
+*getcwd(buf, size) → retorna o diretório atual; útil para pwd.
+*chdir(path) → muda o diretório atual do shell.
+
+*stat(path, &buf) → obtém informações de arquivo (tipo, tamanho, permissões). ?????
+*fstat(fd, &buf) → stat usando fd
+
+*tcgetattr(fd, &termios) → lê atributos do terminal.
+*tcsetattr(fd, flags, &termios) → configura atributos do terminal (echo, canonical mode, etc.).
+{
+	Configura atributos do terminal apontado por fd.
+
+	flags pode ser TCSANOW, TCSADRAIN ou TCSAFLUSH, que determinam quando aplicar as alterações.
+
+	Atributos típicos que você pode alterar:
+
+	echo → se caracteres digitados aparecem na tela
+
+	canonical mode → se o terminal espera enter antes de enviar a linha para o programa
+
+	sinais especiais (Ctrl-C, Ctrl-D, etc.)
+
+	No minishell, serve para controlar comportamento de readline e inputs do usuário.
+
+}
