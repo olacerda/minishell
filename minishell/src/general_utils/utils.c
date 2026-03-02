@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
+/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 02:47:45 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/02 16:26:11 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/02 18:43:58 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -265,7 +265,8 @@ int	is_alphabetical(char xar)
 {
 	if (!xar)
 		return (0);
-	if (((xar >= 'A') && (xar <= 'Z')) || ((xar >= 'a') && (xar <= 'z')))
+	if (((xar >= 'A') && (xar <= 'Z')) || ((xar >= 'a') && (xar <= 'z'))
+		|| ((xar >= '0') && (xar <= '9')) || (xar == '_'))
 		return (1);
 	return (0);
 }

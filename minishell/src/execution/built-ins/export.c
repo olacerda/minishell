@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
+/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 00:59:03 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/02 16:41:12 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/02 18:44:20 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,6 +204,7 @@ int	built_export(char **envp, t_comand *node, t_env *env)
 				put_error("export: `");
 				put_error(node->args[line]);
 				put_error("': not a valid identifier\n");
+				return (0);
 			}
 			line++;
 		}

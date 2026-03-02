@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   data.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
+/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 02:43:11 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/02 15:58:16 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/02 18:25:54 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ t_minishellinfo *init_structures(void)
 
 int	fill_structs_on_loop(t_minishellinfo *all)
 {
-	if (!all || !all->true_fds)
+	if (!all)
 		return (0);
 	all->head = NULL;
 	all->comand = NULL;

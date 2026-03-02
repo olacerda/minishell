@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
+/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 22:13:30 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/01 13:09:50 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/02 21:15:59 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,10 @@ char	**create_env(char **envp, int *capacity)
 	int	line_count;
 	int	line;
 
-	if (!envp)
+	if (!capacity)
 		return (NULL);
 	line_count = 0;
-	while (envp[line_count])
+	while ((envp) && envp[line_count])
 		line_count++;
 	*capacity = line_count + ENV_INCREMENT;
 	result = malloc((*capacity + 1) * sizeof(char *));
@@ -62,9 +62,6 @@ int	env_add(t_env *env_st, int line, char *key, char *string)
 
 	if (!env_st || !env_st->envp || !key || (line < 0))
 		return (0);
-	// printf("end_add\n");
-	// printf("key: %s\n", key);
-	// printf("value: %s\n\n", string);
 	if (line >= env_st->capacity)
 	{
 		env_st->envp = re_allocker(env_st->envp, env_st->size + 1, env_st->size + ENV_INCREMENT + 1, sizeof(char *));
@@ -83,13 +80,6 @@ int	env_add(t_env *env_st, int line, char *key, char *string)
 	{
 		env_st->envp[++line] = NULL;
 		env_st->size = line;
-		// printf("env size: %d\n", env_st->size);
-		// printf("Suposto resultado line %d: %s\n\n\n\n", line - 1, env_st->envp[line - 1]);		
-	}
-	else
-	{
-		// printf("env size: %d\n", env_st->size);
-		// printf("Suposto resultado line %d: %s\n\n\n\n", line, env_st->envp[line]);
 	}
 	return (1);	
 }
@@ -204,6 +194,16 @@ int	env_update(t_env *env_st, char *key, char *new_value1, char *new_value2)
 	return (1);
 }
 
+int	assign_minimal_env(t_env *env)
+{
+	char buffer[PATH_MAX];
+	if (!env)
+		return (0);
+	env_update(env, "PWD", "=", getcwd(buffer, PATH_MAX));
+	env_update(env, "SHLVL", "=", "1");
+	return (1);	
+}
+
 int	assign_env_struct(t_minishellinfo *all)
 {
 	int	capacity;
@@ -216,6 +216,8 @@ int	assign_env_struct(t_minishellinfo *all)
 		return (0);
 	all->my_env->capacity = capacity;
 	all->my_env->size = capacity - ENV_INCREMENT;
+	assign_minimal_env(all->my_env);
+	// if (all->env_status == 0)
 	return (1);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
+/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 12:22:13 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/02 12:14:58 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/02 19:10:32 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ int	redir_heredoc(int fds[2], int flag, t_minishellinfo *all, t_redirection *red
 	(void)all;
 	if (flag == 1)
 	{
-		fd = open("/tmp/minishell_std_storage", O_RDWR | O_CREAT | O_TRUNC, 0600);
+		fd = open("/tmp/minishell_std_storage", O_RDWR | O_CREAT | O_TRUNC, 0644);
 		if (fd < 0)
 			return (0);
 		execute_heredoc(redir->redir_arg, fd);

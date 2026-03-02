@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   built-ins.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
+/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 22:17:42 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/02 16:41:12 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/02 20:50:31 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ int		env_remove(t_env *env_st, char *key);
 int		env_show(char **envp, int is_export);
 int		env_find(char *key, char **envp);
 int		env_update(t_env *env_st, char *key, char *new_value1, char *new_value2);
+int		assign_minimal_env(t_env *env);
+
 
 //cd.c-------------------------------------------------------------------------
 int		built_cd(char **envp, t_comand *node, t_env *env);
