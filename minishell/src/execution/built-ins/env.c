@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 22:13:30 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/02/28 12:11:09 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/01 13:09:50 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,10 @@ int	env_free(char **buffer, int size)
 {
 	int	line;
 
-	if (!buffer)
+	if (!buffer || !(*buffer))
 		return (0);
 	line = 0;
+
 	while ((size && (line < size)) || buffer[line])
 	{
 		free(buffer[line]);
@@ -59,8 +60,11 @@ int	env_add(t_env *env_st, int line, char *key, char *string)
 {
 	int	size;
 
-	if (!env_st || !env_st->envp || !key)
+	if (!env_st || !env_st->envp || !key || (line < 0))
 		return (0);
+	// printf("end_add\n");
+	// printf("key: %s\n", key);
+	// printf("value: %s\n\n", string);
 	if (line >= env_st->capacity)
 	{
 		env_st->envp = re_allocker(env_st->envp, env_st->size + 1, env_st->size + ENV_INCREMENT + 1, sizeof(char *));
@@ -79,6 +83,13 @@ int	env_add(t_env *env_st, int line, char *key, char *string)
 	{
 		env_st->envp[++line] = NULL;
 		env_st->size = line;
+		// printf("env size: %d\n", env_st->size);
+		// printf("Suposto resultado line %d: %s\n\n\n\n", line - 1, env_st->envp[line - 1]);		
+	}
+	else
+	{
+		// printf("env size: %d\n", env_st->size);
+		// printf("Suposto resultado line %d: %s\n\n\n\n", line, env_st->envp[line]);
 	}
 	return (1);	
 }
@@ -166,10 +177,16 @@ int	env_update(t_env *env_st, char *key, char *new_value1, char *new_value2)
 
 	if (!key || !env_st->envp)
 		return (0);
+	// printf("env_update\n");
+	// printf("key: %s\n", key);
+	// printf("value1: %s\n", new_value1);
+	// printf("value2: %s\n", new_value2);
 	result = NULL;
 	line = env_find(key, env_st->envp);
 	if (line == -1)
 		line = env_st->size;
+	// printf("line: %d\n", line);
+	// printf("size: %d\n", env_st->size);
 	total_size = 0;
 	total_size += string_lenght(new_value1);
 	total_size += string_lenght(new_value2);
@@ -192,7 +209,7 @@ int	assign_env_struct(t_minishellinfo *all)
 	int	capacity;
 	
 	if (!all || !all->my_env)
-		return (0);
+		return (write(1, "Error\nWrong pointer in function assign_env_struct\n", 50), 0);
 	capacity = 0;
 	all->my_env->envp = create_env(all->envp, &capacity);
 	if (!all->my_env->envp)

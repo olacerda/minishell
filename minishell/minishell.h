@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 23:13:23 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/02/28 06:01:14 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/02 15:57:53 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,14 +118,14 @@ typedef struct s_minishellinfo
 	t_prefix 	*prefx;
 	t_comand 	*head;
 	t_comand	*comand;
-	// t_states	*states;
+	int			exit_status;
 	t_env		*my_env;
 	int			node_number;
 	int			node_count;
 	int			father_pid;
 	int			*children_pids;
-	int			fd[2];
-	int			previous_fd_0;
+	int			pipe_fd[2];
+	int			prev_fd_0;
 	int			true_fds[2];
 	int			redir_fds[2];
 	int			here_doc_fd;
@@ -151,9 +151,9 @@ typedef struct s_minishellinfo
 // int				append_comand_to_path(char *path, char *comand, int path_idx, int path_buffer_size);
 // int					execute_comands(t_minishellinfo *all, char *comand, char *argv[], char **envp);
 // int					is_comand(char *comand);
-// char 			**create_args(char *string);
-// void				clean_args(char **args);
-// int					count_args(char **args);
+// char 			**split_line(char *string);
+// void				clean_char_dpointer(char **args);
+// int					count_words(char **args);
 // int					get_pipe_position(char **args);
 // int					is_builtin_or_external(t_minishellinfo *all, char *comand, char *absolute_path);
 // int					execute_in_pipe(t_list *node);

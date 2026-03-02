@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   split_teste.c                                      :+:      :+:    :+:   */
+/*   split.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/15 01:14:41 by otlacerd          #+#    #+#             */
-/*   Updated: 2025/11/15 04:38:49 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/03/01 15:03:50 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-char **create_args(char *string)
+char **split_line(char *string)
 {
 	char **result;
 	int	line;
@@ -65,7 +65,7 @@ char **create_args(char *string)
 	return (result);
 }
 
-void	clean_args(char **args)
+void	clean_char_dpointer(char **args)
 {
 	int	line;
 
@@ -88,7 +88,7 @@ int	main(void)
 	int	line;
 
 	line = 0;
-	args = create_args(teste);
+	args = split_line(teste);
 	if (!args)
 	{
 		write(2, "Error\nUnable to create args\n", 28);
@@ -99,7 +99,7 @@ int	main(void)
 		printf("%s\n", args[line]);
 		line++;
 	}
-	clean_args(args);
+	clean_char_dpointer(args);
 	return (0);
 	// write(1, "teste", 5);
 	// write(1, "test\n", 5);

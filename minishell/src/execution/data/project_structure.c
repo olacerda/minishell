@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   project_structure.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 22:56:45 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/02/13 22:32:54 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/03/01 18:06:48 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <data.h>
 
-char	**assign_arg(char *string, int count, int index2, char **result)
+char	**assign_line(char *string, int count, int index2, char **result)
 {
 	int index1;
 	int line;
@@ -41,7 +41,7 @@ char	**assign_arg(char *string, int count, int index2, char **result)
 	return (result[line] = NULL, result);
 }
 
-char **create_args(char *string)
+char **split_line(char *string)
 {
 	char **result;
 	int	index1;
@@ -67,10 +67,10 @@ char **create_args(char *string)
 	if (!result)
 		return (NULL);
 	index2 = 0;
-	return (assign_arg(string, count, index2, result));
+	return (assign_line(string, count, index2, result));
 }
 
-int	count_args(char **args)
+int	count_words(char **args)
 {
 	int	line;
 
@@ -80,7 +80,7 @@ int	count_args(char **args)
 	return (line);
 }
 
-void	clean_args(char **args)
+void	clean_char_dpointer(char **args)
 {
 	int	line;
 
@@ -250,7 +250,7 @@ int	create_n_assign_lst_redirection(t_comand *head, t_minishellinfo *all, char *
 	return (1);
 }
 
-t_comand *create_comand_list(char **all_args, t_minishellinfo *all)
+t_comand *create_linked_list(char **all_args, t_minishellinfo *all)
 {
 	t_comand *lst_head;
 	int	line;
@@ -275,5 +275,5 @@ t_comand *create_comand_list(char **all_args, t_minishellinfo *all)
 		if((all_args[line]) && (all_args[line][0] == '|'))
 			line++;
 	}
-	return (lst_head);
+	return (all->node_number = 0, lst_head);
 }

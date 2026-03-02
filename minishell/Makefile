@@ -6,7 +6,7 @@
 #    By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/22 23:11:08 by otlacerd          #+#    #+#              #
-#    Updated: 2026/02/28 06:05:35 by olacerda         ###   ########.fr        #
+#    Updated: 2026/03/01 10:55:08 by olacerda         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,6 +18,7 @@ RM = rm -rf
 OBJ_DIR = build
 INCLUDES = -I. -I./includes
 LDFLAGS = -lreadline
+VALGRIND = valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp
 
 all: $(NAME)
 
@@ -39,6 +40,7 @@ SRCS =	minishell.c \
 		src/execution/built-ins/unset.c \
 		src/execution/built-ins/echo.c \
  		src/execution/built-ins/cd.c \
+ 		src/execution/built-ins/pwd.c \
 
 OBJS = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRCS))
 
@@ -56,5 +58,8 @@ fclean: clean
 	$(RM) $(NAME)
 
 re: fclean all
+
+valgrind: $(NAME)
+	$(VALGRIND) ./$(NAME)
 
 .PHONY: all clean fclean re

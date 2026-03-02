@@ -6,11 +6,23 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 02:47:45 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/02/28 11:51:30 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/02 16:26:11 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <utils.h>
+
+void	put_error(char *problem)
+{
+	int	index;
+
+	index = 0;
+	if (!problem)
+		return ;
+	while (problem[index])
+		index++;
+	write(2, problem, index);
+}
 
 int	clear_string(char *string, int size)
 {
@@ -237,4 +249,23 @@ int	swap_strings(char **str1, char **str2)
 	*str1 = *str2;
 	*str2 = temp;
 	return (1);
+}
+
+int	is_numerical(char xar)
+{
+	if (!xar)
+		return (0);
+	if ((xar >= '0') && (xar <= '9'))
+		return (1);
+	return (0);
+}
+
+
+int	is_alphabetical(char xar)
+{
+	if (!xar)
+		return (0);
+	if (((xar >= 'A') && (xar <= 'Z')) || ((xar >= 'a') && (xar <= 'z')))
+		return (1);
+	return (0);
 }

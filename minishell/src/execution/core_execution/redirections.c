@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 12:22:13 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/02/28 11:56:40 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/02 12:14:58 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,10 @@
 
 int	save_original_fds(int true_fds[2])
 {
+	// dprintf(true_fds[1], "save_original_fds antes protecao\n\n");
 	if (!true_fds)
 		return (0);
+	// dprintf(true_fds[1], "save_original_fds depois protecao\n\n");
 	true_fds[0] = dup(STDIN_FILENO);
 	true_fds[1] = dup(STDOUT_FILENO);
 	return (1);
@@ -38,7 +40,7 @@ int	redir_in(t_redirection *redir, int fds[2])
 		return (-1);
 	fd = open(redir->redir_arg, O_RDONLY);
 	if (fd < 0)
-		return (-1);
+		return (perror(redir->redir_arg), 0);
 	dup2(fd, fds[0]);
 	close(fd);
 	return (1);
@@ -50,12 +52,10 @@ int	redir_out(t_redirection *redir, int fds[2], t_minishellinfo *all)
 
 	if (!redir || !fds)
 		return (-1);
+	(void)all;
 	fd = open (redir->redir_arg, O_WRONLY | O_CREAT | O_TRUNC, 0600);
 	if (fd < 0)
-	{
-		dprintf(all->true_fds[1], "Falhou OPEN em redir_out\n");
-		return (-1);
-	}
+		return (perror(redir->redir_arg), 0);
 	dup2(fd, fds[1]);
 	close(fd);
 	return (1);
@@ -69,7 +69,7 @@ int	redir_append(t_redirection *redir, int fds[2])
 		return (-1);
 	fd = open (redir->redir_arg, O_WRONLY | O_CREAT | O_APPEND, 0600);
 	if (fd < 0)
-		return (-1);
+		return (perror(redir->redir_arg), 0);
 	dup2(fd, fds[1]);
 	close(fd);
 	return (1);
@@ -79,11 +79,12 @@ int	redir_heredoc(int fds[2], int flag, t_minishellinfo *all, t_redirection *red
 {
 	static int	fd;
  
-	if (!fds)
-		return (0);
+	if (!fds || !all || !redir)
+		return (-1);
+	(void)all;
 	if (flag == 1)
 	{
-		fd = open("/tmp/stdout_storage", O_RDWR | O_CREAT | O_TRUNC, 0600);
+		fd = open("/tmp/minishell_std_storage", O_RDWR | O_CREAT | O_TRUNC, 0600);
 		if (fd < 0)
 			return (0);
 		execute_heredoc(redir->redir_arg, fd);
@@ -91,14 +92,17 @@ int	redir_heredoc(int fds[2], int flag, t_minishellinfo *all, t_redirection *red
 	}
 	if (flag == 2)
 	{
-		fd = open("/tmp/stdout_storage", O_RDONLY);
-		all->here_doc_fd = dup(fd);
-		close(fd);
+		// fd = open("/tmp/stdout_storage", O_RDONLY);
+		// all->here_doc_fd = dup(fd);
+		// close(fd);
 	}
 	if (flag == 3)
 	{
-		dup2(all->here_doc_fd, fds[0]);
-		close(all->here_doc_fd);
+		fd = open("/tmp/minishell_std_storage", O_RDONLY);
+		if (fd < 0)
+			return (perror("/tmp/stdout_storage"), 0);
+		dup2(fd, fds[0]);
+		close(fd);
 	}
 	return (1);
 }
@@ -155,7 +159,7 @@ int	execute_all_heredocs(t_minishellinfo *all)
 				if (node_nbr == all->heredoc_last_node && redir_nbr == all->last_heredoc_redir_node)
 				{
 					redir_heredoc(all->redir_fds, 2, all, redirection);
-					restore_original_fds(all, 0);
+					restore_original_fds(all);
 					return (1);
 				}
 			}
@@ -166,25 +170,4 @@ int	execute_all_heredocs(t_minishellinfo *all)
 		node_nbr++;
 	}
 	return (0);
-}
-
-int	restore_original_fds(t_minishellinfo *all, int flag)
-{
-	if (!all)
-		return (0);
-	all->redir_fds[0] = STDIN_FILENO;
-	all->redir_fds[1] = STDOUT_FILENO;
-	all->fd[1] = -1;
-	all->fd[0] = -1;
-	dup2(all->true_fds[0], all->redir_fds[0]);
-	dup2(all->true_fds[1], all->redir_fds[1]);
-	// dup2(all->true_fds[0], all->previous_fd_0);
-	// dup2(all->true_fds[0], all->redir_fds[0]);
-	// dup2(all->true_fds[1], all->redir_fds[1]);
-	if (flag == 1)
-	{
-		close(all->true_fds[1]);
-		close(all->true_fds[0]);
-	}
-	return (1);
 }

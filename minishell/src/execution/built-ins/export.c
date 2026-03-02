@@ -6,11 +6,30 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 00:59:03 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/02/28 08:34:30 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/02 16:41:12 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "built-ins.h"
+
+char *get_value_pointer(char *prefix, char **env)
+{
+	char 	*result;
+	int 	size;
+
+	if (!prefix || !env)
+		return (NULL);
+	size = 0;
+	while (prefix[size])
+		size++;
+	result = find_environment_variable(prefix, env);
+	if (!result)
+		return (NULL);
+	result += size;
+	if (*result == '=')
+		result++;
+	return (result);
+}
 
 char *get_value(char *string, int beginning)
 {
@@ -61,7 +80,7 @@ char *get_key(char *string, int	delimiter)
 	return (result);
 }
 
-int	identifie_case(t_env *env, char *string)
+int	export_case(t_env *env, char *string)
 {
 	char *key;
 	char *new_value;
@@ -139,6 +158,25 @@ int	sort_env(char **env)
 	return (1);
 }
 
+int	parse_export_string(char *string)
+{
+	int	index;
+
+	if (!string)
+		return (0);
+	index = 0;
+	if ((index == 0) && is_numerical(string[index]))
+		return (0);
+	index++;
+	while (string[index] && (string[index] != '='))
+	{
+		if (is_alphabetical(string[index]) == false)
+			return (0);
+		index++;
+	}
+	return (1);
+}
+
 int	built_export(char **envp, t_comand *node, t_env *env)
 {
 	char **temp;
@@ -159,7 +197,14 @@ int	built_export(char **envp, t_comand *node, t_env *env)
 	{
 		while (node->args[line])
 		{
-			identifie_case(env, node->args[line]);
+			if (parse_export_string(node->args[line]) == true)
+				export_case(env, node->args[line]);
+			else
+			{
+				put_error("export: `");
+				put_error(node->args[line]);
+				put_error("': not a valid identifier\n");
+			}
 			line++;
 		}
 	}

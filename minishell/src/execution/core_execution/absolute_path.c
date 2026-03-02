@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 02:53:45 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/02/28 11:33:58 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/02 14:21:48 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@ int	get_next_path(char *path, char *environment_variable, int env_idx, int path_
 	index = 0;
 	if (!path || !environment_variable || !env_idx)
 		return (0);
-	if ((environment_variable[env_idx]) && (environment_variable[env_idx] == ':'))
-		env_idx++;
 	while ((environment_variable[env_idx]) && (index < (path_buffer_size - 1)) && (environment_variable[env_idx] != ':'))
 	{
 		path[index] = environment_variable[env_idx];
@@ -35,7 +33,7 @@ int	append_comand_to_path(char *path, char *comand, int path_idx, int path_buffe
 {
 	int	index;
 
-	if (!path || !comand || !path_idx || !path_buffer_size)
+	if (!path || !comand || !path_buffer_size || !path_idx)
 		return (0);
 	index = 0;
 	if (path_idx < (path_buffer_size - 1))
@@ -61,7 +59,9 @@ int	is_accessible(char *path, char *comand)
 		return (0);
 	result = 0;
 	result = access((const char *)path, X_OK);
-	return (result);
+	if (result == 0)
+		return (1);
+	return (0);
 }
 
 char *find_absolute_path(char *environment_variable, char *comand, int prefix_size)
@@ -82,13 +82,13 @@ char *find_absolute_path(char *environment_variable, char *comand, int prefix_si
 	while ((env_idx < env_size) && environment_variable[env_idx])
 	{
 		path_size = get_next_path(path, environment_variable, env_idx, PATH_MAX);
-		if (!path_size)
-			return (NULL);
 		if (append_comand_to_path(path, comand, path_size, PATH_MAX) == false)
 			return (NULL);
-		if (is_accessible(path, comand) == false)
+		if (is_accessible(path, comand) == true)
 			return (path);
 		env_idx += path_size;
+		if (environment_variable[env_idx] == ':')
+			env_idx++;
 	}
 	return (NULL);
 }
@@ -123,6 +123,8 @@ char *get_absolute_path(char *prefix, char *comand, char **envp)
 
 	if (!prefix || !comand || !envp)
 		return (put_error("Error\nNull pointer in argument of 'get_absolute_path'\n"), NULL);
+	if (is_redirection(comand))
+		return (NULL);
 	environment_variable = NULL;
 	absolute_path = NULL;
 	prefix_size = string_lenght(prefix);
@@ -132,7 +134,10 @@ char *get_absolute_path(char *prefix, char *comand, char **envp)
 	if (!environment_variable)
 		return (put_error("Error\nFailed to get enviroment path in get_absolute_path\n"), NULL);
 	absolute_path = find_absolute_path(environment_variable, comand, prefix_size);
-	// if (!absolute_path)
-	// 	return (put_error("Error\nFailed to get absolute_path in find_absolute_path\n"), NULL);
+	if (absolute_path == NULL)
+	{
+		put_error(comand);
+		put_error(": command not found\n");
+	}
 	return (absolute_path);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   list_comand.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 22:45:35 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/01/19 06:52:48 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/03/01 12:33:04 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,9 @@ void	comand_lstadd_back(t_comand **lst, t_comand *new)
 {
 	t_comand	*temp;
 
-	// printf("estou no addback\n\n");
 	temp = *lst;
 	if (!new)
-	{
-		printf("erro na protecao");
 		return ;
-	}
 	if (*lst == NULL)
 	{
 		*lst = new;
@@ -36,14 +32,6 @@ void	comand_lstadd_back(t_comand **lst, t_comand *new)
 		new->next = NULL;
 	}
 }
-
-// void	comand_lstadd_front(t_comand **lst, t_comand *new)
-// {
-// 	if (!lst || !new)
-// 		return ;
-// 	new->next = *lst;
-// 	*lst = new;
-// }
 
 void	del(void *content)
 {
@@ -63,6 +51,7 @@ void	comand_lstclear(t_comand **lst, void (*del)(void*))
 		nexttemp = temp->next;
 		del(temp->comand);
 		del(temp->args);
+		redir_lstclear(&temp->redir, del);
 		free(temp);
 		temp = nexttemp;
 	}

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   pid_manegement.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 12:15:59 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/01/22 19:29:53 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/03/02 16:14:33 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <core_execution.h>
 
-int	create_buffer_children_pids(int **children_pids, int size)
+int	create_children_pids_buffer(int **children_pids, int size)
 {
 	int	index;
 
@@ -28,20 +28,38 @@ int	create_buffer_children_pids(int **children_pids, int size)
 	return (1);
 }
 
-int	wait_all_children(int *children_pids, int size)
+int	update_exit_status(int *exit_status, int status)
+{
+	if (!exit_status)
+		return (0);
+	if (WIFEXITED(status))
+		(*exit_status) = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+		(*exit_status) = 128 + WTERMSIG(status);
+	return (1);
+}
+
+int	wait_all_children(int *children_pids, int size, int *exit_status)
 {
 	int	check_wait;
 	int	index;
+	int	status;
 
 	if (!children_pids)
 		return (0);
 	index = 0;
 	check_wait = 0;
+	status = -1;
 	while (index < size)
 	{
-		check_wait = waitpid(children_pids[index], NULL, 0);
-		if (check_wait == -1)
-			return (0); //funcao de tratar erros... quando 2º argumento de waitpid != NULL (&status)
+		if (children_pids[index] > 1)
+		{
+			check_wait = waitpid(children_pids[index], &status, 0);
+			if (check_wait == -1)
+				return (0);
+			else if (check_wait == children_pids[size - 1])
+				update_exit_status(exit_status, status);
+		}
 		index++;
 	}
 	return (1);

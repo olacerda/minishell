@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 02:20:46 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/02/28 12:52:04 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/01 18:11:34 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,37 +19,34 @@
 int	main(int argc, char *argv[], char **envp)
 {
 	t_minishellinfo *all;
-	t_comand		*node;
-	char 			**args;
+	char 			**splitted;
 	char 			*line;
-	int				pid;
 	
 	all = init_structures();
 	if (!all)
 		return (1);
 	line = NULL;
-	pid = getpid();
-	all->father_pid = pid;
-	all->my_env->envp = NULL;
+	fill_structures(all, argc, argv, envp);
 	while (1)
-	{		
-		fill_structures(all, argc, argv, envp);
+	{
+		// dprintf(2, "\n\nLoopando\n\n");
+		fill_structs_on_loop(all);
 		line = readline("minishell> ");
 		if (!line)
 			break ;
-		args = create_args(line);
-		all->head = create_comand_list(args, all);
-		create_buffer_children_pids(&all->children_pids, all->node_count);
-		node = all->head;
-		all->node_number = 0;
+		else if (line && *line)
+			add_history(line);
+		splitted = split_line(line);
+		all->head = create_linked_list(splitted, all);
+		create_children_pids_buffer(&all->children_pids, all->node_count);
 		execute_all_heredocs(all);
-		execute_comands(all, node, argv, envp);
-		if (all->children_pids)
-			free(all->children_pids);
-		restore_original_fds(all, 1);
-		if (all->here_doc_fd != -1)
-			close(all->here_doc_fd);
+		execute_comands(all, all->head, argv, envp);
+		// restore_original_fds(all);
+		end_structures(all, 0);
 		free(line);
+		// dprintf(2, "finale\n");
 	}
+	// end_structures(all, 1);
+	rl_clear_history();
 	return (0);
 }

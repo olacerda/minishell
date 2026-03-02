@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prefix.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 02:53:08 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/02/14 02:26:59 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/03/01 18:02:31 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,10 @@
 
 int	get_all_prefixs(t_prefix *prefix)
 {
+	// printf("get_all_prefixs\n\n");
 	if (!prefix)
 	{
-		put_error("Error\nNULL pointer in argument of 'get_all_prefixs'");
+		put_error("Error\nNULL pointer in argument of 'get_all_prefixs'\n");
 		return (0);
 	}
 	prefix->path = "PATH=";

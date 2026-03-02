@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fork+pipe+execve_teste.c                           :+:      :+:    :+:   */
+/*   fork+pipe+execve.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 21:35:07 by otlacerd          #+#    #+#             */
-/*   Updated: 2025/11/17 20:04:19 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/03/01 15:03:50 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int *create_pipe()
 	
 }
 
-char **create_args(char *string)
+char **split_line(char *string)
 {
 	char **result;
 	int	line;
@@ -75,7 +75,7 @@ char **create_args(char *string)
 	return (result);
 }
 
-void	clean_args(char **args)
+void	clean_char_dpointer(char **args)
 {
 	int	line;
 
