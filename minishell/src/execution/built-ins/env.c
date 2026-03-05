@@ -3,31 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 22:13:30 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/02 21:15:59 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/03/05 13:57:06 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "built-ins.h"
-
-int	env_free(char **buffer, int size)
-{
-	int	line;
-
-	if (!buffer || !(*buffer))
-		return (0);
-	line = 0;
-
-	while ((size && (line < size)) || buffer[line])
-	{
-		free(buffer[line]);
-		line++;
-	}
-	free(buffer);
-	return (1);
-}
 
 char	**create_env(char **envp, int *capacity)
 {
@@ -36,7 +19,10 @@ char	**create_env(char **envp, int *capacity)
 	int	line;
 
 	if (!capacity)
+	{
+		dprintf(2, "!capacity\n\n");
 		return (NULL);
+	}
 	line_count = 0;
 	while ((envp) && envp[line_count])
 		line_count++;
@@ -49,69 +35,56 @@ char	**create_env(char **envp, int *capacity)
 	{
 		result[line] = string_duplicate(envp[line]);
 		if (!result[line])
-			return (env_free(result, line), NULL);
+			return (free_array_string(result, line), NULL);
 		line++;
 	}
 	result[line] = NULL;
 	return (result);
 }
 
-int	env_add(t_env *env_st, int line, char *key, char *string)
+int	assign_minimal_env(t_env *env, char *buffer)
 {
-	int	size;
+	int		shell_lvl;	
+	char	*result;
+	char	*string_shell_lvl;
 
-	if (!env_st || !env_st->envp || !key || (line < 0))
+	if (!env)
 		return (0);
-	if (line >= env_st->capacity)
+	if (env_find_pointer("OLDPWD", env->envp) ==  false)
+		env_update(env, "OLDPWD", NULL, NULL);
+	env_update(env, "PWD", "=", getcwd(buffer, PATH_MAX));
+	if (env_find_pointer("PATH", env->envp) == false)
+		env_update(env, "PATH", "=", BACKUP_PATH);
+	string_shell_lvl = get_value("SHLVL", env->envp);
+	shell_lvl = ascii_to_int(string_shell_lvl);
+	if (shell_lvl < 0)
+		shell_lvl = 1;
+	else if (shell_lvl >= 0)
+		shell_lvl++;
+	result = int_to_ascii(shell_lvl);
+	if ((result == NULL) || (shell_lvl < 0))
 	{
-		env_st->envp = re_allocker(env_st->envp, env_st->size + 1, env_st->size + ENV_INCREMENT + 1, sizeof(char *));
-		if (!env_st->envp)
-			return (0);
-		env_st->capacity = env_st->size + ENV_INCREMENT;
+		result = "0";
+		shell_lvl = FAIL;
 	}
-	size = (string_lenght(key) + string_lenght(string));
-	free(env_st->envp[line]);
-	env_st->envp[line] = malloc((size + 1) * sizeof(char));
-	if (!env_st->envp[line])
-		return (0);
-	string_copy(env_st->envp[line], key);
-	string_cat(env_st->envp[line], size, string);
-	if (line >= env_st->size)
-	{
-		env_st->envp[++line] = NULL;
-		env_st->size = line;
-	}
-	return (1);	
+	env_update(env, "SHLVL", "=", result);
+	return (free((char *)((long)result * (shell_lvl == FAIL))), 1);	
 }
 
-int	env_remove(t_env *env_st, char *key)
+int	assign_env_struct(t_env *env, char **envp, char *buffer)
 {
-	int	line;
-
-	if (!env_st || !key)
+	int	capacity;
+	
+	if (!env || !buffer)
+		return (write(2, "Error\nWrong pointer in function assign_env_struct\n", 50), 0);
+	capacity = 0;
+	env->envp = create_env(envp, &capacity);
+	if (!env->envp)
 		return (0);
-	line = 0;
-	while (env_st->envp[line] != NULL)
-	{
-		if (compare_prefix(key, env_st->envp[line]) == true)
-		{
-			free(env_st->envp[line]);
-			while (line < env_st->size)
-			{
-				env_st->envp[line] = env_st->envp[line + 1];
-				line++;
-			}
-			env_st->size--;
-			break ;
-		}
-		line++;
-	}
-	if ((env_st->capacity - env_st->size) >= (2 * ENV_INCREMENT))
-	{
-		env_st->envp = re_allocker(env_st->envp, env_st->size + 1, (env_st->capacity - ENV_INCREMENT) + 1, sizeof(char *));
-		env_st->capacity = env_st->capacity - ENV_INCREMENT;
-	}
-	return (0);
+	env->capacity = capacity;
+	env->size = capacity - ENV_INCREMENT;
+	assign_minimal_env(env, buffer);
+	return (1);
 }
 
 int	env_show(char **envp, int is_export)
@@ -124,13 +97,13 @@ int	env_show(char **envp, int is_export)
 	line = -1;
 	while (envp[++line])
 	{
-		if (is_export == true)
-			write(1, "export ", 7);
+		(void)((is_export == true) && (write(1, "export ", 7)));
+		if ((is_export == false) && string_have_equal(envp[line]) == false)
+			continue ;
 		size = 0;
 		while (envp[line][size] && (envp[line][size] != '='))
 			size++;
-		write(1, envp[line], size);
-		if (envp[line][size] == '=')
+		if ((write(1, envp[line], size)) && (envp[line][size] == '='))
 		{
 			write(STDOUT_FILENO, &envp[line][size++], 1);
 			(void)((is_export == true) && (write(STDOUT_FILENO, "\"", 1)));
@@ -143,95 +116,26 @@ int	env_show(char **envp, int is_export)
 	return (1);
 }
 
-int	env_find(char *key, char **envp)
+int	built_env(t_all *all, t_cmd *node, t_env *env, char *buffer)
 {
-	int	line;
+	int	size;
 
-	if (!key || !envp)
-		return (-1);
-	line = 0;
-	while (envp[line] != NULL)
-	{
-		if (compare_prefix(key, envp[line]) == true)
-			return (line);
-		line++;
-	}
-	return (-1);
-}
-
-int	env_update(t_env *env_st, char *key, char *new_value1, char *new_value2)
-{
-	char *result;
-	int	line;
-	int	total_size;
-
-	if (!key || !env_st->envp)
+	if (!env || !env->envp || !node || !node->args)
 		return (0);
-	// printf("env_update\n");
-	// printf("key: %s\n", key);
-	// printf("value1: %s\n", new_value1);
-	// printf("value2: %s\n", new_value2);
-	result = NULL;
-	line = env_find(key, env_st->envp);
-	if (line == -1)
-		line = env_st->size;
-	// printf("line: %d\n", line);
-	// printf("size: %d\n", env_st->size);
-	total_size = 0;
-	total_size += string_lenght(new_value1);
-	total_size += string_lenght(new_value2);
-	if (total_size > 0)
+	(void)buffer;
+	(void)all;
+	size = 0;
+	while (node->args[size] != NULL)	
+		size++;
+	if (size > 1)
 	{
-		result = malloc((total_size + 1) * sizeof(char));
-		if (!result)
-			return (0);
+		put_error(node->args[0]);
+		put_error(": ");
+		put_error("‘");
+		put_error(node->args[1]);
+		put_comand_error("’", "No such file or directory");
 	}
-	clear_string(result, (total_size + 1));
-	string_cat(result, (total_size + 1), new_value1);
-	string_cat(result, (total_size + 1), new_value2);
-	env_add(env_st, line, key, result);
-	free(result);
-	return (1);
-}
-
-int	assign_minimal_env(t_env *env)
-{
-	char buffer[PATH_MAX];
-	if (!env)
-		return (0);
-	env_update(env, "PWD", "=", getcwd(buffer, PATH_MAX));
-	env_update(env, "SHLVL", "=", "1");
+	else if (size == 1)
+		env_show(env->envp, 0);
 	return (1);	
 }
-
-int	assign_env_struct(t_minishellinfo *all)
-{
-	int	capacity;
-	
-	if (!all || !all->my_env)
-		return (write(1, "Error\nWrong pointer in function assign_env_struct\n", 50), 0);
-	capacity = 0;
-	all->my_env->envp = create_env(all->envp, &capacity);
-	if (!all->my_env->envp)
-		return (0);
-	all->my_env->capacity = capacity;
-	all->my_env->size = capacity - ENV_INCREMENT;
-	assign_minimal_env(all->my_env);
-	// if (all->env_status == 0)
-	return (1);
-}
-
-int	built_env(char **envp, t_comand *node, t_env *env)
-{
-	if (!envp)
-		return (0);
-	(void)node;
-	(void)env;
-	env_show(envp, 0);
-	return (1);	
-}
-
-// int	env()
-// {
-	
-// }

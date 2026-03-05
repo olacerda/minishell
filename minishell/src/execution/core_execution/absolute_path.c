@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 02:53:45 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/02 14:21:48 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/04 23:52:35 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	get_next_path(char *path, char *environment_variable, int env_idx, int path_
 	return (index);
 }
 
-int	append_comand_to_path(char *path, char *comand, int path_idx, int path_buffer_size)
+int	append_comand(char *path, char *comand, int path_idx, int path_buffer_size)
 {
 	int	index;
 
@@ -51,27 +51,13 @@ int	append_comand_to_path(char *path, char *comand, int path_idx, int path_buffe
 	return (1);
 }
 
-int	is_accessible(char *path, char *comand)
+char *find_abs_path(char *environment_variable, char *comand, int prefix_size, char *path)
 {
-	int	result;
-
-	if (!path || !comand)
-		return (0);
-	result = 0;
-	result = access((const char *)path, X_OK);
-	if (result == 0)
-		return (1);
-	return (0);
-}
-
-char *find_absolute_path(char *environment_variable, char *comand, int prefix_size)
-{
-	static char	path[PATH_MAX];
 	int			env_size;
 	int			env_idx;
 	int			path_size;
 	
-	if (!clear_string(path, PATH_MAX) || !environment_variable || !comand || !prefix_size)
+	if (!string_zero(path, PATH_MAX) || !environment_variable || !comand || !prefix_size)
 		return (NULL);
 	path[PATH_MAX - 1] = '\0';
 	env_size = string_lenght(environment_variable);
@@ -82,7 +68,7 @@ char *find_absolute_path(char *environment_variable, char *comand, int prefix_si
 	while ((env_idx < env_size) && environment_variable[env_idx])
 	{
 		path_size = get_next_path(path, environment_variable, env_idx, PATH_MAX);
-		if (append_comand_to_path(path, comand, path_size, PATH_MAX) == false)
+		if (append_comand(path, comand, path_size, PATH_MAX) == false)
 			return (NULL);
 		if (is_accessible(path, comand) == true)
 			return (path);
@@ -93,51 +79,26 @@ char *find_absolute_path(char *environment_variable, char *comand, int prefix_si
 	return (NULL);
 }
 
-char	*find_environment_variable(char *prefix, char **envp)
-{
-	int	result;
-	int	line;
-
-	line = 0;
-	if (!prefix || !envp)
-	{
-		return (NULL);
-	}
-	while (envp[line] != NULL)
-	{
-		result = compare_prefix(prefix, envp[line]);
-		if (result > 0)
-		{
-			return (envp[line]);
-		}
-		line++;
-	}
-	return (NULL);
-}
-
-char *get_absolute_path(char *prefix, char *comand, char **envp)
+char *get_absolute_path(char *prefix, char *comand, char **envp, char *buffer)
 {
 	char *environment_variable;
 	char *absolute_path;
 	int	prefix_size;
 
 	if (!prefix || !comand || !envp)
-		return (put_error("Error\nNull pointer in argument of 'get_absolute_path'\n"), NULL);
+		return (NULL);
+	if (is_accessible(comand, comand) == true)
+		return (comand);
 	if (is_redirection(comand))
 		return (NULL);
 	environment_variable = NULL;
 	absolute_path = NULL;
 	prefix_size = string_lenght(prefix);
 	if (!prefix_size)
-		return (put_error("Error\nPrefix size == 0 in get_absolute_path\n"), NULL);
-	environment_variable = find_environment_variable(prefix, envp);
+		return (NULL);
+	environment_variable = env_find_pointer(prefix, envp);
 	if (!environment_variable)
-		return (put_error("Error\nFailed to get enviroment path in get_absolute_path\n"), NULL);
-	absolute_path = find_absolute_path(environment_variable, comand, prefix_size);
-	if (absolute_path == NULL)
-	{
-		put_error(comand);
-		put_error(": command not found\n");
-	}
+		return (NULL);
+	absolute_path = find_abs_path(environment_variable, comand, prefix_size, buffer);
 	return (absolute_path);
 }

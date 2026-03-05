@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sort_char_double.c                                 :+:      :+:    :+:   */
+/*   sort_double_pointer.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 04:24:03 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/02/24 05:10:16 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/03/04 07:38:34 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	string_compare(char *str1, char *str2)
 	return (str1[i] - str2[i]);
 }
 
-int	swap_strings(char **str1, char **str2)
+int	string_swap(char **str1, char **str2)
 {
 	char *temp;
 
@@ -60,7 +60,7 @@ int	sort_env(char **env)
 			finder++;
 		}
 		if (line != smallest)
-			swap_strings(&(env[line]), &(env[smallest]));
+			string_swap(&(env[line]), &(env[smallest]));
 		line++;
 	}
 	return (1);

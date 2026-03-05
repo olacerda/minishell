@@ -3,22 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 05:29:14 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/02/24 07:18:36 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/03/04 20:23:20 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <built-ins.h>
 
-int	built_unset(char **envp, t_comand *node, t_env *env)
+int	built_unset(t_all *all, t_cmd *node, t_env *env, char *buffer)
 {
 	int	line;
 
-	if (!envp || !node || !env)
+	if (!node || !node->args || !env)
 		return (0);
 	line = 0;
+	(void)buffer;
+	(void)all;
 	while (node->args[line])
 	{
 		env_remove(env, node->args[line]);

@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 21:35:07 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/01 15:03:50 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/04 08:40:46 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ char **split_line(char *string)
 	return (result);
 }
 
-void	clean_char_dpointer(char **args)
+void	free_array_string(char **args)
 {
 	int	line;
 

@@ -6,20 +6,22 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 01:54:57 by olacerda          #+#    #+#             */
-/*   Updated: 2026/02/28 06:24:17 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/04 20:23:56 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <built-ins.h>
 
-int	built_echo(char **envp, t_comand *node, t_env *env)
+int	built_echo(t_all *all, t_cmd *node, t_env *env, char *buffer)
 {
 	int	line;
 	int	flag;
 
-	if (!envp || !node || !node->args)
+	if (!node || !node->args)
 		return (0);
 	(void)env;
+	(void)buffer;
+	(void)all;
 	line = 1;
 	flag = 0;
 	while (node->args[line] != NULL)
@@ -30,7 +32,7 @@ int	built_echo(char **envp, t_comand *node, t_env *env)
 			line++;
 			continue ;
 		}
-		print_string(node->args[line]);
+		string_print(node->args[line]);
 		line++;
 		if (node->args[line] != NULL)
 			write(STDOUT_FILENO, " ", 1);

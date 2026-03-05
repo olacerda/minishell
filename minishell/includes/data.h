@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 02:41:35 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/01 15:59:25 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/04 23:47:43 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,43 +16,36 @@
 # include <minishell.h>
 # include <core_execution.h>
 
-//-------data.c-----------------------------------------------------------------------------------------------------
-t_minishellinfo *init_structures(void);
-int				fill_structures(t_minishellinfo *all, int argc, char **argv, char **envp);
-int				fill_structs_on_loop(t_minishellinfo *all);
-void			end_structures(t_minishellinfo *all, int flag);
-int				close_fd(int *fd);
-int				destroy_fds(t_minishellinfo *all, int flag);
-int				restore_original_fds(t_minishellinfo *all);
+//-data.c-----------------------------------------------------------------------
+t_all	*init_structures(void);
+int		fill_structures(t_all *all, int argc, char **argv, char **envp);
+int		fill_structs_on_loop(t_all *all);
+void	end_structures(t_all *all, int finish, int is_children);
 
+//-create_comand_lst.c----------------------------------------------------------
 
-//------project_structure.c-----------------------------------------------------------------------------------------
-char			**split_line(char *string);
-char			**assign_line(char *string, int count, int index2, char **result);
-int				count_words(char **args);
-void			clean_char_dpointer(char **args);
+char	**create_args_buffer(int line, char **all_args);
+void	assign_args(int *line, char **splitted, char **comand, char **args);
+int		create_n_assign_node_comand(t_cmd **lst_head, char *cmd, char **args);
+t_cmd	*create_linked_list(char **all_args, t_all *all);
 
-char			**create_args_buffer(int line, char **all_args);
-void			assign_args(int *line, char **all_args, char **comand, char **args);
-int				create_n_assign_node_comand(t_comand **lst_head, char *comand, char **args);
-t_comand		*create_linked_list(char **all_args, t_minishellinfo *all);
+//-create_redir_lst.c ----------------------------------------------------------
+// int		create_lst_redir(t_cmd *head, t_all *all, char **arg, int *line);
+int		create_lst_redir(t_cmd *head, t_all *all, char **splitted, int line);
+int		create_n_assign_node_redir(t_redir **head, char **splitted, int line);
+int		is_redirection(char *string);
 
-int				create_n_assign_lst_redirection(t_comand *head, t_minishellinfo *all, char **all_args, int string);
-int				create_n_assign_node_redirection(t_redirection **head, char **all_args, int string);
-int				is_redirection(char *string);
+//-list_comand.c ---------------------------------------------------------------
+void	comand_lstadd_back(t_cmd **lst, t_cmd *new);
+void	comand_lstclear(t_cmd **lst, void (*del)(void*));
+int		comand_lstsize(t_cmd *lst);
+t_cmd	*comand_lstnew(char *comand, char **args);
+void	del(void *content);
 
-//list_comand.c ----------------------------------------------------------------------------------------------
-void			comand_lstadd_back(t_comand **lst, t_comand *new);
-void			comand_lstclear(t_comand **lst, void (*del)(void*));
-int				comand_lstsize(t_comand *lst);
-t_comand		*comand_lstnew(char *comand, char **args);
-void			del(void *content);
-
-//list_redir.c ----------------------------------------------------------------------------------------------
-void			redir_lstadd_back(t_redirection **lst, t_redirection *new);
-void			redir_lstclear(t_redirection **lst, void (*del)(void*));
-int				redir_lstsize(t_redirection *lst);
-t_redirection	*redir_lstnew(t_redir_type type, char *args);
-
+//-list_redir.c ----------------------------------------------------------------
+void	redir_lstadd_back(t_redir **lst, t_redir *new);
+void	redir_lstclear(t_redir **lst, void (*del)(void*));
+int		redir_lstsize(t_redir *lst);
+t_redir	*redir_lstnew(t_redir_type type, char *args);
 
 #endif

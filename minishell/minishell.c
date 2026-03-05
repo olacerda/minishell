@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 02:20:46 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/02 21:25:06 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/03/04 23:48:57 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,11 @@
 
 int	main(int argc, char *argv[], char **envp)
 {
-	t_minishellinfo *all;
+	t_all *all;
 	char 			**splitted;
 	char 			*line;
 
+	// signal()
 	all = init_structures();
 	if (!all)
 		return (1);
@@ -29,7 +30,6 @@ int	main(int argc, char *argv[], char **envp)
 	fill_structures(all, argc, argv, envp);
 	while (1)
 	{
-		// dprintf(2, "\n\nLoopando\n\n");
 		fill_structs_on_loop(all);
 		line = readline("minishell> ");
 		if (!line)
@@ -38,15 +38,13 @@ int	main(int argc, char *argv[], char **envp)
 			add_history(line);
 		splitted = split_line(line);
 		all->head = create_linked_list(splitted, all);
-		create_children_pids_buffer(&all->children_pids, all->node_count);
-		execute_all_heredocs(all);
-		execute_comands(all, all->head, argv, envp);
-		// restore_original_fds(all);
-		end_structures(all, 0);
+		create_children_pids_buffer(&all->children_pids, all->lst_size);
+		exec_all_heredocs(all);
+		exec_comands(all, all->head, all->my_env->envp);
+		end_structures(all, 0, 0);
 		free(line);
-		// dprintf(2, "finale\n");
 	}
-	// end_structures(all, 1);
 	rl_clear_history();
+	end_structures(all, 1, 0);
 	return (0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   built-ins.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 22:17:42 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/02 20:50:31 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/03/04 20:18:00 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,46 +17,51 @@
 # include "utils.h"
 # include "core_execution.h"
 
-//env.c ------------------------------------------------------------------------
-int		built_env(char **envp, t_comand *node, t_env *env);
-char	**create_env(char **envp, int *capacity);
-int		assign_env_struct(t_minishellinfo *all);
+//-adm_built-ins.c -------------------------------------------------------------
+func_ptr	*get_built_in(char *comand);
+int			exec_builtin(t_origin *origin, t_cmd *node, t_all *all);
 
-int		env_free(char **buffer, int size);
-int		env_add(t_env *env_st, int line, char *key, char *string);
-int		env_remove(t_env *env_st, char *key);
-int		env_show(char **envp, int is_export);
-int		env_find(char *key, char **envp);
-int		env_update(t_env *env_st, char *key, char *new_value1, char *new_value2);
-int		assign_minimal_env(t_env *env);
+//-env.c -----------------------------------------------------------------------
+int			built_env(t_all *all, t_cmd *node, t_env *env, char *buffer);
+int			env_show(char **envp, int is_export);
+char		**create_env(char **envp, int *capacity);
+int			assign_env_struct(t_env *env, char **envp, char *buffer);
+int			assign_minimal_env(t_env *env, char *buffer);
 
+// int		env_free(char **buffer, int size);
+int			env_add(t_env *env_st, int line, char *key, char *string);
+int			env_remove(t_env *env_st, char *key);
+int			env_update(t_env *env_st, char *key, char *value1, char *value2);
+int			env_find_line(char *key, char **envp);
+char		*env_find_pointer(char *prefix, char **envp);
 
-//cd.c-------------------------------------------------------------------------
-int		built_cd(char **envp, t_comand *node, t_env *env);
-int		cd_minus(int oldpwd_status, char **new_path, char **envp);
-int		change_paths(char *new_path, int *oldpwd_status, t_env *env);
+//-cd.c-------------------------------------------------------------------------
+int			built_cd(t_all *all, t_cmd *node, t_env *env, char *buffer);
+int			cd_minus(int oldpwd_status, char **new_path, char **envp);
+int			change_paths(char *new_path, int *old_stat, t_env *env, char *buf);
 
-//echo.c-------------------------------------------------------------------------
-int		built_echo(char **envp, t_comand *node, t_env *env);
+//-echo.c-----------------------------------------------------------------------
+int			built_echo(t_all *all, t_cmd *node, t_env *env, char *buffer);
 
-//export.c ------------------------
-int		built_export(char **envp, t_comand *node, t_env *env);
-int		export_case(t_env *env, char *string);
-char	*get_key(char *string, int	delimiter);
-char	*get_value(char *string, int beginning);
-char	**duplicate_envp(t_env *env_st);
-int		sort_env(char **env);
-char	*get_value_pointer(char *prefix, char **env);
-int		parse_export_string(char *string);
+//-export.c --------------------------------------------------------------------
+int			built_export(t_all *all, t_cmd *node, t_env *env, char *buffer);
+int			export_case(t_env *env, char *string);
+char		**duplicate_envp(t_env *env_st);
+int			sort_env(char **env);
+int			parse_export_string(char *string);
 
+//-export_utils.c --------------------------------------------------------------
+char		*key_dup(char *string, int	delimiter);
+char		*value_dup(char *string, int beginning);
+char		*get_value(char *prefix, char **env);
 
-//unset.c --------------------------------------------------------------------------
-int		built_unset(char **envp, t_comand *node, t_env *env);
+//-unset.c ---------------------------------------------------------------------
+int			built_unset(t_all *all, t_cmd *node, t_env *env, char *buffer);
 
-//exit.c ----------------------------------------------------------------------
-int		built_exit(char **envp, t_comand *node, t_env *env);
+//-exit.c ----------------------------------------------------------------------
+int			built_exit(t_all *all, t_cmd *node, t_env *env, char *buffer);
 
-//pwc.c ---------------------------------------------------------------------------
-int		built_pwd(char **envp, t_comand *node, t_env *env);
+//-pwc.c -----------------------------------------------------------------------
+int			built_pwd(t_all *all, t_cmd *node, t_env *env, char *buffer);
 
 #endif

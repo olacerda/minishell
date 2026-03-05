@@ -3,189 +3,107 @@
 /*                                                        :::      ::::::::   */
 /*   core_execution.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 04:34:05 by olacerda          #+#    #+#             */
-/*   Updated: 2026/03/02 20:59:06 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/03/05 16:25:23 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <core_execution.h>
 
-int	normal_execution(t_minishellinfo *all, t_comand *node, char **args, char **envp)
+int	get_cmd_origin(char **args, t_env *env, t_origin *origin, char *buffer)
 {
-	char 	*absolute_path;
-	int	pid;
-
-	if (!all || !node || !args || !envp)
-		return (0);
-	absolute_path = get_absolute_path(all->prefx->path, node->comand, envp);
-	execute_redirections(node, all->redir_fds, all->pipe_fd, all);
-	pid = fork();
-	if (pid < 0)
-		return (put_error("Error\nFailed normal_execution\n"), 0);
-	if (pid == 0)
-	{
-		execve(absolute_path, args, envp);
-		exit (1);
-	}
-	else if (pid > 0)
-		all->children_pids[all->node_number] = pid;
-	return (1);
-}
-
-int	sync_redirection_and_pipe(t_comand *node, t_redirection *redir, int *redir_fd, int *pipe_fd)
-{
-	if (!node || !redir_fd || !pipe_fd || !redir)
-		return (0);
-	if ((node->next != NULL) && (redir->type == REDIR_OUTPUT || redir->type == REDIR_APPEND))
-		redir_fd[1] = pipe_fd[1];
-	if ((pipe_fd[0] != -1) && (redir->type == REDIR_HEREDOC || redir->type == REDIR_INPUT))
-		redir_fd[0] = pipe_fd[0];
-	return (1);
-}
-
-int	execute_redirections(t_comand *node, int redir_fds[2], int pipe_fds[2], t_minishellinfo *all)
-{
-	t_redirection	*redir;
-	int	result;
+	func_ptr *builtin;
+	char *external_comand;
+	int	line;
 	
-	if (!node || !pipe_fds || !all || !redir_fds)
+	external_comand = NULL;
+	builtin = NULL;
+	if (!origin || !args)
 		return (0);
-	// printf("execute_redirections\n\n");
-	redir = node->redir;
-	result = 0;
-	while (redir != NULL)
+	builtin = get_built_in(args[0]);
+	if (builtin == NOT_FOUND)
+		external_comand = get_absolute_path("PATH", args[0], env->envp, buffer);
+	if (FOUND external_comand)
+		env_update(env, "_", "=", external_comand);
+	else
 	{
-		// dprintf(2, "entrou execute_redirections\n");
-		sync_redirection_and_pipe(node, redir, redir_fds, pipe_fds);
-		if (redir->type == REDIR_OUTPUT)
-			result = redir_out(redir, redir_fds, all);
-		else if (redir->type == REDIR_INPUT)
-			result = redir_in(redir, redir_fds);
-		else if (redir->type == REDIR_APPEND)
-			result = redir_append(redir, redir_fds);
-		else if (redir->type == REDIR_HEREDOC)
-			result = redir_heredoc(redir_fds, 3, all, redir);
-		if (result != true)
-			return (0);
-		redir = redir->next;
+		line = 0;
+		while (args[line] != NULL)
+			line++;
+		if (((line - 1) >= 0) && (args[line - 1] != NULL))
+			env_update(env, "_", "=", args[line - 1]);
 	}
+	origin->abs_path = external_comand;
+	origin->built_in = builtin;
 	return (1);
 }
 
-func_pointer *get_built_in(char *comand)
-{
-	if (string_compare(comand, "exit") == 0)
-		return (built_exit);
-	else if (string_compare(comand, "env") == 0)
-		return (built_env);
-	else if (string_compare(comand, "export") == 0)
-		return (built_export);
-	else if (string_compare(comand, "unset") == 0)
-		return (built_unset);
-	else if (string_compare(comand, "echo") == 0)
-		return (built_echo);
-	else if (string_compare(comand, "cd") == 0)
-		return (built_cd);
-	else if (string_compare(comand, "pwd") == 0)
-		return (built_pwd);
-	return (NULL);	
-}
-
-int	get_comand_origin(char *prefix, char *comand, char **envp, t_comand_origin *origin)
-{
-	if (!prefix || !comand || !origin)
-		return (0);
-	// printf("get_comand_origin\n\n");
-	origin->absolute_path = NULL;
-	origin->built_in = NULL;
-	origin->built_in = get_built_in(comand);
-	if (origin->built_in != NULL)
-		return (1);
-	origin->absolute_path = get_absolute_path(prefix, comand, envp);
-	if (!origin->absolute_path)
-		return (0);
-	return (1);
-}
-
-int	execute_built_in(t_comand_origin *origin, t_comand *node, t_env *env)
-{
-	if (!origin || !node || !env)
-		return (0);
-	// printf("execute_built_in\n\n");
-	origin->built_in(env->envp, node, env);
-	return (1);
-}
-
-int	execute_external_comand(char *absolute_path, char **args, char **envp, int *fds)
+int	exec_external_cmd(char *abs_path, char **args, t_all *all, int *fds)
 {
 	int	pid;
 
-	if (!args || !envp || !fds || !absolute_path)
+	if (!args || !all || !all->my_env || !all->my_env->envp || !fds)
 		return (0);
 	pid = fork();
 	if (pid < 0)
-		return (put_error("Error\nFailed fork in execute_first_node\n"), 0);
+		return (perror("fork"), 0);
 	if (pid == 0)
 	{
-		if (!!execve(absolute_path, args, envp))
-			perror(args[0]);
-		exit(1);
+		if (abs_path == NULL)
+		{
+			put_comand_error(args[0], "comand not found");
+			exit(127);	
+		}
+		else if (!!execve(abs_path, args, all->my_env->envp))
+			perror("execve");
+		end_structures(all, 1, 1);
+		exit (1);
 	}
 	else if (pid > 0)
 	{
 		if (fds[0] >= 0)
-			close_fd(&fds[0]);
+			safe_close_fd(&fds[0]);
 		if (fds[1] >= 0)
-			close_fd(&fds[1]);
+			safe_close_fd(&fds[1]);
 	}
 	return (pid);
 }
 
-int	node_execution(t_minishellinfo *all, t_comand *node, char *argv[], char **envp)
+int	exec_linked_lst(t_all *all, t_cmd *node, t_fds *fds, t_env *env)
 {
-	t_comand_origin origin;
-	// int		check_pipe;
-	int		temp;
-	int		redir_status;
+	t_origin origin;
+	int		status;
+	int		*node_nbr;
 
-	if (!all || !node || !argv || !envp)
+	if (!all || !node || !fds || !env)
 		return (0);
-	// printf("node_execution\n");
+	node_nbr = &(all->node_number);
 	while (node != NULL)
 	{
-		restore_original_fds(all);
-		if (node->next != NULL)
-		{
-			// check_pipe = pipe(all->pipe_fd);
-			if (pipe(all->pipe_fd) == -1)
-				return (put_error("Error\nFailed pipe in node_execution\n"), 0);
-			temp = all->pipe_fd[0];
-		}
-		all->pipe_fd[0] = all->prev_fd_0;
-		redir_status = execute_redirections(node, all->redir_fds, all->pipe_fd, all);
-		// dprintf(2, "execute_pipes\n");
-		execute_pipes(all->pipe_fd);
-		// dprintf(2, "get_comand_origin\n");
-		get_comand_origin(all->prefx->path, node->comand, envp, &origin);
-		// dprintf(2, "comand execution\n\n\n");
-		if ((redir_status == true) && (origin.built_in != NULL))
-			execute_built_in(&origin, node, all->my_env);
-		else if (redir_status == true)
-			all->children_pids[all->node_number++] = execute_external_comand(origin.absolute_path, node->args, envp, all->pipe_fd);
-		all->prev_fd_0 = temp;
+		restore_original_fds(fds);
+		get_pipe(fds, node);
+		status = exec_redirections(node, fds->redir, fds->pipe); 
+		exec_pipe(fds->pipe);
+		get_cmd_origin(node->args, env, &origin, all->buffer);
+		if ((status == true) && (origin.built_in != NULL))
+			exec_builtin(&origin, node, all);
+		else if (status == true)
+			all->children_pids[(*node_nbr)] = exec_external_cmd(origin.abs_path, node->args, all, fds->pipe);
+		else
+			all->children_pids[*node_nbr] = -1;
+		all->node_number++;
 		node = node->next;
  	}
 	return (1);
 }
 
-int	execute_comands(t_minishellinfo *all, t_comand *node, char *argv[], char **envp)
+int	exec_comands(t_all *all, t_cmd *node, char **envp)
 {
-	if (!all || !node || !argv || !envp)
+	if (!all || !node || !envp)
 		return (0);
-	// printf("execute_comands\n");
-	node_execution(all, node, argv, envp);
-	wait_all_children(all->children_pids, all->node_count, &(all->exit_status));
+	exec_linked_lst(all, node, all->fds, all->my_env);
+	wait_all_children(all->children_pids, all->node_number, &(all->exit_status));
 	return (1);
 }

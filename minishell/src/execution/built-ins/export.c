@@ -3,82 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 00:59:03 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/02 18:44:20 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/03/04 20:22:48 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "built-ins.h"
-
-char *get_value_pointer(char *prefix, char **env)
-{
-	char 	*result;
-	int 	size;
-
-	if (!prefix || !env)
-		return (NULL);
-	size = 0;
-	while (prefix[size])
-		size++;
-	result = find_environment_variable(prefix, env);
-	if (!result)
-		return (NULL);
-	result += size;
-	if (*result == '=')
-		result++;
-	return (result);
-}
-
-char *get_value(char *string, int beginning)
-{
-	char 	*result;
-	int		size;
-	int		index;
-
-	if (!string || beginning < 0 || !string[beginning])
-		return NULL;
-	index = beginning;
-	size = 0;
-	while (string[index])
-	{
-		index++;
-		size++;
-	}
-	result = malloc((size + 1) * sizeof(char));
-	if (!result)
-		return (NULL);
-	index = 0;
-	while (string[beginning])
-	{
-		result[index] = string[beginning];
-		index++;
-		beginning++;
-	}
-	result[index] = '\0';
-	return (result);
-}
-
-char *get_key(char *string, int	delimiter)
-{
-	char *result;
-	int	index;
-	
-	if (!string || (delimiter < 0) || string[0] == ' ')
-		return (NULL);
-	index = 0;
-	result = malloc((delimiter + 1) * sizeof(char));
-	if (!result)
-		return (NULL);
-	while (string[index] && index < delimiter)
-	{
-		result[index] = string[index];
-		index++;
-	}
-	result[index] = '\0';
-	return (result);
-}
 
 int	export_case(t_env *env, char *string)
 {
@@ -95,19 +27,17 @@ int	export_case(t_env *env, char *string)
 	old_value = NULL;
 	while (string[index] && (string[index] != '=') && (*(short *)&(string[index]) != *(short *)&("+="[0])))
 		index++;
-	key = get_key(string, index);
+	key = key_dup(string, index);
 	if (key != NULL)
 	{
 		if (string[index] != '=')
-			old_value = get_value(find_environment_variable(key, env->envp), index);
+			old_value = value_dup(env_find_pointer(key, env->envp), index);
 		if ((string[index] == '=') || ((*(short *)&(string[index++]) == *(short *)&("+="[0])) && ++(index)))
-			new_value = get_value(string, index);
+			new_value = value_dup(string, index);
 	}
+	// printf("key: %s\nold_value: %s\nnew_value: %s\n\n", old_value, new_value);
 	env_update(env, key, old_value, new_value);
-	free(key);
-	free(old_value);
-	free(new_value);
-	return (1);
+	return (free(key), free(old_value), free(new_value), 1);
 }
 
 char **duplicate_envp(t_env *env_st)
@@ -152,7 +82,7 @@ int	sort_env(char **env)
 			finder++;
 		}
 		if (line != smallest)
-			swap_strings(&(env[line]), &(env[smallest]));
+			string_swap(&(env[line]), &(env[smallest]));
 		line++;
 	}
 	return (1);
@@ -170,20 +100,24 @@ int	parse_export_string(char *string)
 	index++;
 	while (string[index] && (string[index] != '='))
 	{
-		if (is_alphabetical(string[index]) == false)
+		if ((is_alphanumerical_or_underline(string[index]) == false) && (string[index] != '+'))
+			return (0);
+		if ((string[index] == '+') && (string[index + 1] != '='))
 			return (0);
 		index++;
 	}
 	return (1);
 }
 
-int	built_export(char **envp, t_comand *node, t_env *env)
+int	built_export(t_all *all, t_cmd *node, t_env *env, char *buffer)
 {
 	char **temp;
 	int	line;
 
-	if (!envp || !node || !node->args)
+	if (!env || !node || !node->args)
 		return (0);
+	(void)buffer;
+	(void)all;
 	line = 1;
 	if (!node->args[line])
 	{

@@ -6,7 +6,7 @@
 #    By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/22 23:11:08 by otlacerd          #+#    #+#              #
-#    Updated: 2026/03/01 10:55:08 by olacerda         ###   ########.fr        #
+#    Updated: 2026/03/04 22:25:41 by olacerda         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,29 +18,41 @@ RM = rm -rf
 OBJ_DIR = build
 INCLUDES = -I. -I./includes
 LDFLAGS = -lreadline
-VALGRIND = valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp
-
+VALGRIND = valgrind --leak-check=full --track-fds=yes --show-leak-kinds=all --track-origins=yes --suppressions=readline.supp
 all: $(NAME)
 
 SRCS =	minishell.c \
-		src/execution/core_execution/core_execution.c \
 		src/execution/core_execution/absolute_path.c \
-		src/execution/core_execution/prefix.c \
-		src/execution/core_execution/pipes.c \
-		src/execution/core_execution/pid_manegement.c \
+		src/execution/core_execution/core_execution_utils.c \
+		src/execution/core_execution/core_execution.c \
+		src/execution/core_execution/fd.c \
+		src/execution/core_execution/pid.c \
+		src/execution/core_execution/pipe.c \
+		src/execution/core_execution/redirections_execution.c \
 		src/execution/core_execution/redirections.c \
 		src/execution/data/data.c \
-		src/execution/data/list_comand.c \
-		src/execution/data/list_redirections.c \
-		src/execution/data/project_structure.c \
-		src/general_utils/utils.c \
+		src/execution/data/lst_comand_tools.c \
+		src/execution/data/lst_redir_tools.c \
+		src/execution/data/create_redir_lst.c \
+		src/execution/data/create_comand_lst.c \
+		src/utils/allocation.c \
+		src/utils/char.c \
+		src/utils/conversion.c \
+		src/utils/error.c \
+		src/utils/get_next_line.c \
+		src/utils/string_advanced.c \
+		src/utils/string_basic.c \
+		src/execution/built-ins/adm_built-ins.c \
 		src/execution/built-ins/env.c \
+		src/execution/built-ins/env_utils.c \
 		src/execution/built-ins/exit.c \
+		src/execution/built-ins/export_utils.c \
 		src/execution/built-ins/export.c \
 		src/execution/built-ins/unset.c \
 		src/execution/built-ins/echo.c \
  		src/execution/built-ins/cd.c \
  		src/execution/built-ins/pwd.c \
+		src/execution/signals/signals.c \
 
 OBJS = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRCS))
 
@@ -51,7 +63,7 @@ $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-clean:
+clean:	
 	$(RM) $(OBJ_DIR)
 
 fclean: clean
@@ -62,4 +74,4 @@ re: fclean all
 valgrind: $(NAME)
 	$(VALGRIND) ./$(NAME)
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re valgrind

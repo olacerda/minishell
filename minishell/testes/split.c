@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/15 01:14:41 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/01 15:03:50 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/04 08:40:46 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ char **split_line(char *string)
 	return (result);
 }
 
-void	clean_char_dpointer(char **args)
+void	free_array_string(char **args)
 {
 	int	line;
 
@@ -99,7 +99,7 @@ int	main(void)
 		printf("%s\n", args[line]);
 		line++;
 	}
-	clean_char_dpointer(args);
+	free_array_string(args);
 	return (0);
 	// write(1, "teste", 5);
 	// write(1, "test\n", 5);

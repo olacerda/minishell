@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 02:20:46 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/01 15:08:05 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/04 12:45:44 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@
 
 int	main(int argc, char *argv[], char **envp)
 {
-	t_minishellinfo *all;
-	t_comand		*node;
+	t_all *all;
+	t_cmd		*node;
 	char 			**args;
 	char 			*line;
 	int				pid;
@@ -33,7 +33,7 @@ int	main(int argc, char *argv[], char **envp)
 	all->my_env->envp = NULL;
 	while (1)
 	{		
-		fill_structures(all, argc, argv, envp);
+		fill_structures(all, argc, argv, &envp);
 
 		
 // --------------------------- Teste ENV -------------------------------------------------
@@ -93,9 +93,9 @@ int	main(int argc, char *argv[], char **envp)
 
 // // -----------------------------------FIND --------------------------------------------------
 // 		int	env_line;
-// 		env_line = env_find("PATH=", all->my_env->envp);
+// 		env_line = env_find_line("PATH=", all->my_env->envp);
 // 		if (env_line == -1)
-// 			return (put_error("Error\nFailed to get envp line with env_find\n\n"), 1);
+// 			return (put_error("Error\nFailed to get envp line with env_find_line\n\n"), 1);
 // 		printf("%s\n", all->my_env->envp[env_line]);
 // 		exit(1);
 // // -------------------------------------------------------------------------------------------
@@ -171,11 +171,11 @@ int	main(int argc, char *argv[], char **envp)
 		// exit(1);
 // //-------------------------------------------------------------------------		
 
-		create_children_pids_buffer(&all->children_pids, all->node_count);
+		create_children_pids_buffer(&all->children_pids, all->lst_size);
 		node = all->head;
 		all->node_number = 0;
-		execute_all_heredocs(all);
-		execute_comands(all, node, argv, envp);
+		exec_all_heredocs(all);
+		exec_comands(all, node, argv, envp);
 		if (all->children_pids)
 			free(all->children_pids);
 		restore_original_fds(all, 1);

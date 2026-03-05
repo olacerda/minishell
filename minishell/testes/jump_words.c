@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   teste_jump_words.c                                 :+:      :+:    :+:   */
+/*   jump_words.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 03:38:16 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/01/19 04:03:34 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/03/04 07:34:30 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	print_string_from_index(char *string, int index)
 	write(1, "\n", 1);
 }
 
-int	jump_words(int	quantity, char *string, int *index)
+int	string_jump_words(int	quantity, char *string, int *index)
 {
 	int	count;
 
@@ -52,6 +52,6 @@ int	main(void)
 {
 	char *string = "oi tudo bem com voce";
 	int	index = 0;
-	jump_words(2, string, &index);
+	string_jump_words(2, string, &index);
 	print_string_from_index(string, index);
 }
