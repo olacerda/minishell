@@ -6,17 +6,17 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 02:54:14 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/05 11:43:22 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/07 15:59:45 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CORE_EXECUTION_H
 # define CORE_EXECUTION_H
 
-# include <minishell.h>
-# include <utils.h>
-# include <data.h>
-# include <built-ins.h>
+# include "minishell.h"
+# include "utils.h"
+# include "data.h"
+# include "built-ins.h"
 
 //-envp_path.c -----------------------------------------------------------------
 char	*get_absolute_path(char *prefix, char *comand, char **envp, char *buffer);
@@ -38,6 +38,9 @@ int		get_pipe(t_fds *fds, t_cmd *node);
 int		wait_all_children(int *children_pids, int size, int *exit_status);
 int		create_children_pids_buffer(int **children_pids, int size);
 int		update_exit_status(int *exit_status, int status);
+void	handle_exit_status(void);
+
+
 
 //-fd.c ------------------------------------------------------------------------
 int		save_original_fds(int *std_backup);
@@ -47,16 +50,17 @@ int		restore_original_fds(t_fds *fds);
 int		safe_close_fd(int *fd);
 
 //-redir_execution.c -----------------------------------------------------------
-int		exec_redirections(t_cmd *node, int redir_fds[2], int pipe_fds[2]);
+int		exec_redirections(t_all *all, t_cmd *node, int red_fds[2], int pp_fds[2]);
 int		exec_all_heredocs(t_all *all);
-int		exec_heredoc(char *end_marker, int fd);
+int		exec_heredoc(t_all *all, int *singal, char *end_marker, int fd);
+int		add_heredoc_history(char *buffer, char *user_line, int size);
 int		sync_redir_n_pipe(t_cmd *node, t_redir *redir, int *red_fd, int *pp_fd);
 
 //-redirections.c --------------------------------------------------------------
 int		redir_in(t_redir *redir, int fds[2]);
 int		redir_out(t_redir *redir, int fds[2]);
 int		redir_append(t_redir *redir, int fds[2]);
-int		redir_heredoc(int	fds[2], int flag, t_redir *redir);
+int		redir_heredoc(t_all *all, int fds[2], int is_execution, t_redir *redir);
 
 //-core_execution_utils.c ------------------------------------------------------
 int		is_accessible(char *path, char *comand);

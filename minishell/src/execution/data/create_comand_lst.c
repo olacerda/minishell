@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 09:13:47 by olacerda          #+#    #+#             */
-/*   Updated: 2026/03/04 23:04:31 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/05 21:49:35 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,8 +115,6 @@ t_cmd *create_linked_list(char **splitted, t_all *all)
 		if (create_n_assign_node_comand(&lst_head, comand, args) == true)
 			all->lst_size++;
 		line = create_lst_redir(lst_head, all, splitted, line_temp);		
-		// dprintf(2, "\n\nline: %d\n\n", line);
-		// create_lst_redir(lst_head, all, splitted, &line);		
 		if((splitted[line]) && (splitted[line][0] == '|'))
 			free(splitted[line++]);
 	}

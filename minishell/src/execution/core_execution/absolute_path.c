@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 02:53:45 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/04 23:52:35 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/07 07:28:54 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ char *find_abs_path(char *environment_variable, char *comand, int prefix_size, c
 	if (!string_zero(path, PATH_MAX) || !environment_variable || !comand || !prefix_size)
 		return (NULL);
 	path[PATH_MAX - 1] = '\0';
-	env_size = string_lenght(environment_variable);
+	env_size = string_length(environment_variable);
 	env_idx = prefix_size;
 	path_size = 0;
 	if (!env_size || env_size <= prefix_size)
@@ -93,7 +93,7 @@ char *get_absolute_path(char *prefix, char *comand, char **envp, char *buffer)
 		return (NULL);
 	environment_variable = NULL;
 	absolute_path = NULL;
-	prefix_size = string_lenght(prefix);
+	prefix_size = string_length(prefix);
 	if (!prefix_size)
 		return (NULL);
 	environment_variable = env_find_pointer(prefix, envp);

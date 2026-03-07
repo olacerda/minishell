@@ -1,22 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.h                                          :+:      :+:    :+:   */
+/*   pre_increment_with_multiple_instance.c             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/04 06:58:43 by olacerda          #+#    #+#             */
-/*   Updated: 2026/03/07 05:48:53 by olacerda         ###   ########.fr       */
+/*   Created: 2026/03/07 04:52:05 by olacerda          #+#    #+#             */
+/*   Updated: 2026/03/07 04:54:25 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SIGNALS_H
-# define SIGNALS_H
-# include "minishell.h"
+#include <stdio.h>
+#include <unistd.h>
 
-void	handler(int sig);
-t_proc	*get_process_info(t_all *all);
-void	signals(int is_child);
-
-
-#endif
+int	main(void)
+{
+	int	index = 0;
+	char *string = "teste";
+	int	size;
+	while (string[size])
+		size++;
+	index = 0;
+	while ((index++ < size) && string[index])
+		write(1, &string[index], 1);
+}

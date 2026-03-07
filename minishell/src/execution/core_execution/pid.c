@@ -6,20 +6,19 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 12:15:59 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/05 16:32:28 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/07 08:25:24 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <core_execution.h>
 
-void handle_exec_error(void)
+void handle_exit_status(void)
 {
     if (errno == ENOENT)
-        exit(127);
-    else if (errno == EACCES)
-        exit(1);
-    else
-        exit(1);
+        exit (127);
+	else if (errno == EACCES)
+		exit (126);
+    exit(1);
 }
 
 int	create_children_pids_buffer(int **children_pids, int size)
@@ -40,14 +39,14 @@ int	create_children_pids_buffer(int **children_pids, int size)
 
 int	update_exit_status(int *exit_status, int status)
 {
-	dprintf(2, "update_exit_status\n\n");
+	// dprintf(2, "update_exit_status\n\n");
 	if (!exit_status)
 		return (0);
 	if (WIFEXITED(status))
 		(*exit_status) = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
 		(*exit_status) = 128 + WTERMSIG(status);
-	dprintf(2, "exit_status: %d\n", *exit_status);
+	// dprintf(2, "exit_status: %d\n", *exit_status);
 	return (1);
 }
 

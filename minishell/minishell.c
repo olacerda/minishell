@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 02:20:46 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/04 23:48:57 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/07 17:24:08 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,31 +18,25 @@
 
 int	main(int argc, char *argv[], char **envp)
 {
-	t_all *all;
-	char 			**splitted;
-	char 			*line;
+	t_all	*all;
 
-	// signal()
 	all = init_structures();
 	if (!all)
 		return (1);
-	line = NULL;
 	fill_structures(all, argc, argv, envp);
+	signals(false);
 	while (1)
 	{
 		fill_structs_on_loop(all);
-		line = readline("minishell> ");
-		if (!line)
+		if (get_line(&(all->line)) == false)
 			break ;
-		else if (line && *line)
-			add_history(line);
-		splitted = split_line(line);
-		all->head = create_linked_list(splitted, all);
+		all->splitted = split_line(all->line);
+		all->head = create_linked_list(all->splitted, all);
 		create_children_pids_buffer(&all->children_pids, all->lst_size);
 		exec_all_heredocs(all);
 		exec_comands(all, all->head, all->my_env->envp);
 		end_structures(all, 0, 0);
-		free(line);
+		free(all->line);
 	}
 	rl_clear_history();
 	end_structures(all, 1, 0);

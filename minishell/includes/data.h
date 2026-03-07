@@ -6,21 +6,25 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 02:41:35 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/04 23:47:43 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/07 12:28:40 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef DATA_H
 # define DATA_H
 
-# include <minishell.h>
-# include <core_execution.h>
+# include "minishell.h"
+# include "core_execution.h"
+# include "signals.h"
+# include "utils.h"
 
 //-data.c-----------------------------------------------------------------------
 t_all	*init_structures(void);
 int		fill_structures(t_all *all, int argc, char **argv, char **envp);
 int		fill_structs_on_loop(t_all *all);
-void	end_structures(t_all *all, int finish, int is_children);
+void	end_structures(t_all *all, int is_the_end, int is_children);
+int		get_line(char **line);
+
 
 //-create_comand_lst.c----------------------------------------------------------
 
@@ -31,7 +35,7 @@ t_cmd	*create_linked_list(char **all_args, t_all *all);
 
 //-create_redir_lst.c ----------------------------------------------------------
 // int		create_lst_redir(t_cmd *head, t_all *all, char **arg, int *line);
-int		create_lst_redir(t_cmd *head, t_all *all, char **splitted, int line);
+int		create_lst_redir(t_cmd *node, t_all *all, char **splitted, int line);
 int		create_n_assign_node_redir(t_redir **head, char **splitted, int line);
 int		is_redirection(char *string);
 
@@ -40,7 +44,6 @@ void	comand_lstadd_back(t_cmd **lst, t_cmd *new);
 void	comand_lstclear(t_cmd **lst, void (*del)(void*));
 int		comand_lstsize(t_cmd *lst);
 t_cmd	*comand_lstnew(char *comand, char **args);
-void	del(void *content);
 
 //-list_redir.c ----------------------------------------------------------------
 void	redir_lstadd_back(t_redir **lst, t_redir *new);

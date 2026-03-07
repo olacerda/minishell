@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 15:38:20 by olacerda          #+#    #+#             */
-/*   Updated: 2026/03/04 15:49:36 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/06 00:52:59 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,8 @@ int	env_update(t_env *env_st, char *key, char *value1, char *value2)
 	if (line == -1)
 		line = env_st->size;
 	total_size = 0;
-	total_size += string_lenght(value1);
-	total_size += string_lenght(value2);
+	total_size += string_length(value1);
+	total_size += string_length(value2);
 	if (total_size > 0)
 	{
 		result = malloc((total_size + 1) * sizeof(char));
@@ -92,7 +92,7 @@ int	env_add(t_env *env_st, int line, char *key, char *string)
 			return (0);
 		env_st->capacity = env_st->size + ENV_INCREMENT;
 	}
-	size = (string_lenght(key) + string_lenght(string));
+	size = (string_length(key) + string_length(string));
 	free(env_st->envp[line]);
 	env_st->envp[line] = malloc((size + 1) * sizeof(char));
 	if (!env_st->envp[line])

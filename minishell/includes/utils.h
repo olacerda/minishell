@@ -6,19 +6,23 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 02:46:06 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/04 21:59:16 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/07 15:42:59 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef UTILS_H
 # define UTILS_H
-# include <minishell.h>
+# include "minishell.h"
 
 //-allocation.c ----------------------------------------------------------------
 char 	*string_duplicate(char *string);
 void	*re_allocker(void *pointer, long size, long new_size, long type_size);
 char	**split_line(char *string);
+int		realloc_appender(char **string, char *to_append);
+
+//-allocation_free.c -----------------------------------------------------------
 int		free_array_string(char **array, int size);
+void	del(void *content);
 
 //-char.c ----------------------------------------------------------------------
 int		is_alphanumerical_or_underline(char xar);
@@ -45,7 +49,7 @@ int		array_string_lenght(char **args);
 //-string_basic.c --------------------------------------------------------------
 int		string_zero(char *string, int size);
 int		string_print(char *string);
-int		string_lenght(char *string);
+int		string_length(char *string);
 int		string_copy(char *str1, char *str2);
 int		string_have_equal(char *string);
 

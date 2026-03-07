@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 22:13:30 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/05 13:57:06 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/07 07:15:18 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,7 @@ char	**create_env(char **envp, int *capacity)
 int	assign_minimal_env(t_env *env, char *buffer)
 {
 	int		shell_lvl;	
-	char	*result;
-	char	*string_shell_lvl;
+	char	*pointer;
 
 	if (!env)
 		return (0);
@@ -54,21 +53,25 @@ int	assign_minimal_env(t_env *env, char *buffer)
 		env_update(env, "OLDPWD", NULL, NULL);
 	env_update(env, "PWD", "=", getcwd(buffer, PATH_MAX));
 	if (env_find_pointer("PATH", env->envp) == false)
-		env_update(env, "PATH", "=", BACKUP_PATH);
-	string_shell_lvl = get_value("SHLVL", env->envp);
-	shell_lvl = ascii_to_int(string_shell_lvl);
+	{
+		dprintf(2, "minimal path\n");
+		env_update(env, "PATH", "=", PATH_BACKUP);
+	}
+	pointer = get_value("SHLVL", env->envp);
+	shell_lvl = ascii_to_int(pointer);
 	if (shell_lvl < 0)
 		shell_lvl = 1;
 	else if (shell_lvl >= 0)
 		shell_lvl++;
-	result = int_to_ascii(shell_lvl);
-	if ((result == NULL) || (shell_lvl < 0))
+	pointer = int_to_ascii(shell_lvl);
+	if ((pointer != NULL) && (shell_lvl >= 0))
 	{
-		result = "0";
-		shell_lvl = FAIL;
+		env_update(env, "SHLVL", "=", pointer);
+		free(pointer);
 	}
-	env_update(env, "SHLVL", "=", result);
-	return (free((char *)((long)result * (shell_lvl == FAIL))), 1);	
+	else if ((pointer == NULL) || (shell_lvl < 0))
+		env_update(env, "SHLVL", "=", "0");
+	return (1);	
 }
 
 int	assign_env_struct(t_env *env, char **envp, char *buffer)

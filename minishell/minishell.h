@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 23:13:23 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/05 16:30:56 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/07 17:18:09 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,15 +26,30 @@
 # include <sys/select.h>
 # include <signal.h>
 # include <errno.h>
+#include <termios.h>
 
 
 # define BUFFER_SIZE 25
 # define ENV_INCREMENT 10
 # define FAIL -1
-# define NOT_FOUND NULL
-# define FOUND NULL !=
-# define BACKUP_PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+# define TEMP_FILE	"/tmp/minishell_std_storage"
+# define PATH_BACKUP "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+# define MAX_LONG_STR "9223372036854775807"
 
+
+// ------- get_all_lines
+typedef struct s_gal
+{
+	int	index1;
+	int	index2;
+	int	readbytes;
+	int	all_read;
+	char *line;
+	char *new_line;
+	int	fd;
+}			t_gal;
+
+// -------- get_next_line
 typedef struct	s_gnl
 {
 	int		start;
@@ -51,11 +66,11 @@ typedef enum e_redir_type
     REDIR_HEREDOC = 4
 } 			t_redir_type;
 
-typedef	struct s_redirection
+typedef	struct s_redir
 {
 	t_redir_type	type;
 	char 			*redir_arg;
-	struct s_redirection	*next;
+	struct s_redir	*next;
 }				t_redir;
 
 typedef struct s_comand
@@ -66,7 +81,7 @@ typedef struct s_comand
 	struct s_comand	*next;
 }				t_cmd;
 
-typedef struct s_my_envp
+typedef struct s_env
 {
 	char	**envp;
 	int		size;
@@ -78,27 +93,36 @@ typedef struct s_fds
 	int		previous_0;
 	int		pipe[2];
 	int		redir[2];
-	int		here_doc;
 	int		std_backup[2];
 }				t_fds;
+
+typedef struct s_proc
+{
+	int	signal;
+	int	is_heredoc;
+	int	exit_status;
+}				t_proc;
+
+typedef struct termios t_term;
 
 typedef struct s_all
 {
 	int		argc;
 	char 	**argv;
 	char	**envp;
+	char	**splitted;
+	char 	*line;
 	t_cmd 	*head;
 	t_env	*my_env;
 	t_fds	*fds;
-	char	buffer[PATH_MAX];
-	int		exit_status;
+	t_proc	*process_info;
+	t_term	saved_termios;
 	int		env_status;
+	char	buffer[PATH_MAX + 1];
 	int		node_number;
 	int		lst_size;
-	int		father_pid;
 	int		*children_pids;
-	int		heredoc_last_node;
-	int		last_heredoc_redir_node;
+	
 }				t_all;
 
 typedef int (func_ptr)(t_all *all, t_cmd *node, t_env *env, char *buffer);

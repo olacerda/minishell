@@ -1,22 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.h                                          :+:      :+:    :+:   */
+/*   max_long.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/04 06:58:43 by olacerda          #+#    #+#             */
-/*   Updated: 2026/03/07 05:48:53 by olacerda         ###   ########.fr       */
+/*   Created: 2026/03/07 06:38:35 by olacerda          #+#    #+#             */
+/*   Updated: 2026/03/07 06:49:18 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SIGNALS_H
-# define SIGNALS_H
-# include "minishell.h"
+#include <stdio.h>
 
-void	handler(int sig);
-t_proc	*get_process_info(t_all *all);
-void	signals(int is_child);
+int	main(void)
+{
+	long int n = 0;
 
-
-#endif
+	n = (unsigned long)-1 >> 1;
+	printf("%li\n", n);
+	n = (1L << 63);
+	printf("%li\n", n);
+}

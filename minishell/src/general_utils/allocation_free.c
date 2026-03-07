@@ -1,22 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.h                                          :+:      :+:    :+:   */
+/*   allocation_free.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/04 06:58:43 by olacerda          #+#    #+#             */
-/*   Updated: 2026/03/07 05:48:53 by olacerda         ###   ########.fr       */
+/*   Created: 2026/03/07 12:26:28 by olacerda          #+#    #+#             */
+/*   Updated: 2026/03/07 12:27:23 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SIGNALS_H
-# define SIGNALS_H
-# include "minishell.h"
+#include "built-ins.h"
 
-void	handler(int sig);
-t_proc	*get_process_info(t_all *all);
-void	signals(int is_child);
+int	free_array_string(char **array, int size)
+{
+	int	line;
 
+	if (!array)
+		return (0);
+	line = 0;
+	while (array[line] && (((size) && (line < size)) || array[line]))
+	{
+		free(array[line]);
+		line++;
+	}
+	if (size == 0)
+		free(array[line]);
+	free(array);
+	return (1);
+}
 
-#endif
+void	del(void *content)
+{
+	if (!content)
+		return ;
+	free(content);
+}

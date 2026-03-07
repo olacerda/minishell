@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 22:45:35 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/04 20:08:47 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/07 13:23:42 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,6 @@ void	comand_lstadd_back(t_cmd **lst, t_cmd *new)
 		temp->next = new;
 		new->next = NULL;
 	}
-}
-
-void	del(void *content)
-{
-	if (!content)
-		return ;
-	free(content);
 }
 
 void	comand_lstclear(t_cmd **lst, void (*del)(void*))

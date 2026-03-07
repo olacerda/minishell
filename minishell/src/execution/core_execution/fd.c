@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 07:04:23 by olacerda          #+#    #+#             */
-/*   Updated: 2026/03/04 23:19:01 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/07 17:30:20 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ int	destroy_fds(t_fds *fds, int flag)
 {
 	if (!fds)
 		return (0);
-	safe_close_fd(&fds->here_doc);
 	safe_close_fd(&fds->pipe[0]);
 	safe_close_fd(&fds->pipe[1]);
 	safe_close_fd(&fds->redir[0]);
@@ -42,6 +41,7 @@ int	destroy_fds(t_fds *fds, int flag)
 	safe_close_fd(&fds->previous_0);
 	if (flag == 1)
 	{
+		dprintf(2, "deletou os std_backup\n");
 		safe_close_fd(&fds->std_backup[0]);
 		safe_close_fd(&fds->std_backup[1]);
 	}

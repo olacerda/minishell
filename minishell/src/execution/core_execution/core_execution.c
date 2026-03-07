@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 04:34:05 by olacerda          #+#    #+#             */
-/*   Updated: 2026/03/05 16:25:23 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/07 17:35:36 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,18 @@
 int	get_cmd_origin(char **args, t_env *env, t_origin *origin, char *buffer)
 {
 	func_ptr *builtin;
-	char *external_comand;
+	char *absolute_path;
 	int	line;
 	
-	external_comand = NULL;
+	absolute_path = NULL;
 	builtin = NULL;
 	if (!origin || !args)
 		return (0);
 	builtin = get_built_in(args[0]);
-	if (builtin == NOT_FOUND)
-		external_comand = get_absolute_path("PATH", args[0], env->envp, buffer);
-	if (FOUND external_comand)
-		env_update(env, "_", "=", external_comand);
+	if (builtin == NULL)
+		absolute_path = get_absolute_path("PATH", args[0], env->envp, buffer);
+	if (absolute_path != NULL)
+		env_update(env, "_", "=", absolute_path);
 	else
 	{
 		line = 0;
@@ -35,7 +35,7 @@ int	get_cmd_origin(char **args, t_env *env, t_origin *origin, char *buffer)
 		if (((line - 1) >= 0) && (args[line - 1] != NULL))
 			env_update(env, "_", "=", args[line - 1]);
 	}
-	origin->abs_path = external_comand;
+	origin->abs_path = absolute_path;
 	origin->built_in = builtin;
 	return (1);
 }
@@ -46,20 +46,30 @@ int	exec_external_cmd(char *abs_path, char **args, t_all *all, int *fds)
 
 	if (!args || !all || !all->my_env || !all->my_env->envp || !fds)
 		return (0);
+	// dprintf(2, "%s\n", abs_path);
+	// dprintf(2, "comand: %s\nabs_path: %s\n", args[0], abs_path);
 	pid = fork();
 	if (pid < 0)
 		return (perror("fork"), 0);
 	if (pid == 0)
 	{
+		signals(true);
+		// static int stdin_backup;
+		// stdin_backup = dup(STDIN_FILENO);
+		// close(STDIN_FILENO);
+		// dup2(stdin_backup, STDIN_FILENO);
+		// close(stdin_backup);
+		tcsetattr(STDIN_FILENO, TCSANOW, &(all->saved_termios));
+		fflush(stdout);
+		// restore_original_fds(all->fds);
+		// dup2(STDERR_FILENO, 2);
+		rl_clear_history();
 		if (abs_path == NULL)
-		{
-			put_comand_error(args[0], "comand not found");
-			exit(127);	
-		}
+			return (put_comand_error(args[0], "comand not found"), exit(127), 0);
 		else if (!!execve(abs_path, args, all->my_env->envp))
 			perror("execve");
 		end_structures(all, 1, 1);
-		exit (1);
+		handle_exit_status();
 	}
 	else if (pid > 0)
 	{
@@ -84,7 +94,7 @@ int	exec_linked_lst(t_all *all, t_cmd *node, t_fds *fds, t_env *env)
 	{
 		restore_original_fds(fds);
 		get_pipe(fds, node);
-		status = exec_redirections(node, fds->redir, fds->pipe); 
+		status = exec_redirections(all, node, fds->redir, fds->pipe);
 		exec_pipe(fds->pipe);
 		get_cmd_origin(node->args, env, &origin, all->buffer);
 		if ((status == true) && (origin.built_in != NULL))
@@ -101,9 +111,9 @@ int	exec_linked_lst(t_all *all, t_cmd *node, t_fds *fds, t_env *env)
 
 int	exec_comands(t_all *all, t_cmd *node, char **envp)
 {
-	if (!all || !node || !envp)
+	if (!all || !node || !envp || (all->process_info->signal == SIGINT))
 		return (0);
 	exec_linked_lst(all, node, all->fds, all->my_env);
-	wait_all_children(all->children_pids, all->node_number, &(all->exit_status));
+	wait_all_children(all->children_pids, all->node_number, &(all->process_info->exit_status));
 	return (1);
 }

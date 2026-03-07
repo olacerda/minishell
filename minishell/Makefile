@@ -6,7 +6,7 @@
 #    By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/22 23:11:08 by otlacerd          #+#    #+#              #
-#    Updated: 2026/03/04 22:25:41 by olacerda         ###   ########.fr        #
+#    Updated: 2026/03/07 13:22:39 by olacerda         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,21 +28,22 @@ SRCS =	minishell.c \
 		src/execution/core_execution/fd.c \
 		src/execution/core_execution/pid.c \
 		src/execution/core_execution/pipe.c \
-		src/execution/core_execution/redirections_execution.c \
-		src/execution/core_execution/redirections.c \
+		src/execution/core_execution/redirection_execution.c \
+		src/execution/core_execution/redirection.c \
 		src/execution/data/data.c \
 		src/execution/data/lst_comand_tools.c \
 		src/execution/data/lst_redir_tools.c \
 		src/execution/data/create_redir_lst.c \
 		src/execution/data/create_comand_lst.c \
-		src/utils/allocation.c \
-		src/utils/char.c \
-		src/utils/conversion.c \
-		src/utils/error.c \
-		src/utils/get_next_line.c \
-		src/utils/string_advanced.c \
-		src/utils/string_basic.c \
-		src/execution/built-ins/adm_built-ins.c \
+		src/general_utils/allocation.c \
+		src/general_utils/allocation_free.c \
+		src/general_utils/char.c \
+		src/general_utils/conversion.c \
+		src/general_utils/error.c \
+		src/general_utils/get_next_line.c \
+		src/general_utils/string_advanced.c \
+		src/general_utils/string_basic.c \
+		src/execution/built-ins/builtins_manager.c \
 		src/execution/built-ins/env.c \
 		src/execution/built-ins/env_utils.c \
 		src/execution/built-ins/exit.c \

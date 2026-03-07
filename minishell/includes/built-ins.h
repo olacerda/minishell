@@ -6,7 +6,7 @@
 /*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 22:17:42 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/04 20:18:00 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/07 06:26:39 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ int			change_paths(char *new_path, int *old_stat, t_env *env, char *buf);
 
 //-echo.c-----------------------------------------------------------------------
 int			built_echo(t_all *all, t_cmd *node, t_env *env, char *buffer);
+int			parse_echo(char **args, int *line);
 
 //-export.c --------------------------------------------------------------------
 int			built_export(t_all *all, t_cmd *node, t_env *env, char *buffer);

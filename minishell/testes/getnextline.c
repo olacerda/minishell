@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   teste_getnextline.c                                :+:      :+:    :+:   */
+/*   getnextline.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
+/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 16:34:51 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/01/19 17:15:58 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/03/06 00:37:54 by olacerda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ char *liner(t_gnl *gnl, int *total_end, char **line)
 	return (newline[index] = '\0', free(*line), newline);
 }
 
-char *get_next_line(int fd)
+char *get_next_line(int fd, int *size)
 {
 	static	t_gnl gnl[FD_SETSIZE];
 	char *line;
@@ -61,11 +61,11 @@ char *get_next_line(int fd)
 			gnl[fd].readbytes = read(fd, gnl[fd].buffer, BUFFER_SIZE);
 			if (gnl[fd].readbytes == -1)
 				return (free(line), NULL);
-			if (gnl[fd].readbytes == 0)
-				break ;
+			*size += gnl[fd].readbytes;
 			*(long *)&(gnl[fd].start) = 0;
 		}
-		line = liner(&gnl[fd], &total_end, &line);
+		if (gnl[fd].readbytes > 0)
+			line = liner(&gnl[fd], &total_end, &line);
 	}
 	return (gnl[fd].end += (gnl[fd].buffer[gnl[fd].end] == '\n'), line);
 }
