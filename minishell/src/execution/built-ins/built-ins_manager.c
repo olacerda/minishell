@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   adm_built-ins.c                                    :+:      :+:    :+:   */
+/*   built-ins_manager.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
+/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 07:17:23 by olacerda          #+#    #+#             */
-/*   Updated: 2026/03/04 20:19:08 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/12 18:52:50 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ func_ptr *get_built_in(char *comand)
 
 int	exec_builtin(t_origin *origin, t_cmd *node, t_all *all)
 {
-	if (!origin || !node || !all || !all->my_env || !all->buffer)
+	if (!origin || !node || !all || !all->my_env)
 		return (0);
 	origin->built_in(all, node, all->my_env, all->buffer);
 	return (1);

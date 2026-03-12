@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
+/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 03:35:41 by olacerda          #+#    #+#             */
-/*   Updated: 2026/03/06 23:39:11 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/12 18:52:19 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	get_pipe(t_fds *fds, t_cmd *node)
 {
 	static int	temp_fd_0 = -1;
 	
-	if (!fds || !node || !fds->pipe)
+	if (!fds || !node)
 		return (0);
 	if (node->next != NULL)
 	{
