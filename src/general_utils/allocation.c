@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   allocation.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
+/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 07:27:33 by olacerda          #+#    #+#             */
-/*   Updated: 2026/03/12 00:34:47 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/25 06:34:26 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,15 @@
 
 void	*re_allocker(void *pointer, long size, long new_size, long type_size)
 {
-	void 	*new_pointer;
-	long 	x1;
+	void	*new_pointer;
+	long	x1;
 	long	x2;
 
 	if (!pointer || !new_size || !type_size)
 		return (NULL);
 	new_pointer = malloc(new_size * type_size);
 	if (!new_pointer)
-		return (free(pointer), NULL);
+		return (NULL);
 	size = size * type_size;
 	new_size = new_size * type_size;
 	x1 = -1;
@@ -40,25 +40,26 @@ int	realloc_appender(char **string, char *content)
 {
 	int	string_size;
 	int	new_size;
-	
+
 	if (!string || !(*string))
 		return (-1);
 	new_size = 0;
 	string_size = string_length(*string);
 	new_size += string_size;
 	new_size += string_length(content);
-	*string = re_allocker(*string, (string_size + 1), (new_size + 1), sizeof(char));
+	*string = re_allocker(*string, (string_size + 1), (new_size + 1),
+			sizeof(char));
 	if (!(*string))
 		return (0);
 	string_cat(*string, (new_size + 1), content);
 	return (1);
 }
 
-char *string_duplicate(char *string)
+char	*string_duplicate(char *string)
 {
-	char *result;
-	int	index;
-	int	size;
+	char	*result;
+	int		index;
+	int		size;
 
 	if (!string)
 		return (NULL);
@@ -76,10 +77,11 @@ char *string_duplicate(char *string)
 	return (result);
 }
 
-static char	**assign_split_line(char *string, int count, int index2, char **result)
+static char	**assign_split_line(char *string, int count, int index2,
+		char **result)
 {
-	int index1;
-	int line;
+	int	index1;
+	int	line;
 
 	index1 = 0;
 	line = 0;
@@ -105,11 +107,11 @@ static char	**assign_split_line(char *string, int count, int index2, char **resu
 	return (result[line] = NULL, result);
 }
 
-char **split_line(char *string)
+char	**split_line(char *string)
 {
-	char **result;
-	int	index1;
-	int	count;
+	char	**result;
+	int		index1;
+	int		count;
 
 	if (!string)
 		return (NULL);

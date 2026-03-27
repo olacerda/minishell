@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   string_advanced.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
+/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 07:30:23 by olacerda          #+#    #+#             */
-/*   Updated: 2026/03/04 09:01:29 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/25 04:51:02 by nismayil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 int	string_cat(char *string1, int size, char *string2)
 {
 	int	x1;
-	int x2;
-	
+	int	x2;
+
 	if (!string1 || !string2)
 		return (0);
 	x1 = 0;
@@ -26,7 +26,7 @@ int	string_cat(char *string1, int size, char *string2)
 	while ((string2[x2] != '\0'))
 	{
 		if (x1 >= size)
-			break;
+			break ;
 		string1[x1] = string2[x2];
 		x1++;
 		x2++;
@@ -37,7 +37,7 @@ int	string_cat(char *string1, int size, char *string2)
 
 int	string_swap(char **str1, char **str2)
 {
-	char *temp;
+	char	*temp;
 
 	if (!str1 || !str2)
 		return (0);
@@ -55,30 +55,11 @@ int	string_compare(char *str1, char *str2)
 		return (0);
 	i = 0;
 	while ((str1[i] && str2[i]) && (str1[i] == str2[i])
-				&& (str1[i + 1] != '\n'))
+		&& (str1[i + 1] != '\n'))
 		i++;
 	return (str1[i] - str2[i]);
 }
 
-int	string_jump_words(int	quantity, char *string, int *index)
-{
-	int	count;
-
-	if (!quantity || !string)
-		return (-1);
-	count = 0;
-	while (count < quantity)
-	{
-		while ((string[*index]) && (string[*index] != ' ') && (string[*index] != '|'))
-			(*index)++;
-		count++;
-		if (string[*index] == '\0')
-			return (0) ;
-		else if (string[*index] == ' ')
-			(*index)++;
-	}
-	return (1);
-}
 int	array_string_lenght(char **args)
 {
 	int	line;
@@ -87,4 +68,19 @@ int	array_string_lenght(char **args)
 	while (args[line] != NULL)
 		line++;
 	return (line);
+}
+
+void	print_nbr(int number)
+{
+	long	nbr;
+
+	nbr = number;
+	if (nbr < 0)
+	{
+		nbr = -nbr;
+		write(1, "-", 1);
+	}
+	if (nbr > 9)
+		print_nbr(nbr / 10);
+	write(1, &(char){(nbr % 10) + 48}, 1);
 }

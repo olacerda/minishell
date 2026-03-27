@@ -3,38 +3,50 @@
 /*                                                        :::      ::::::::   */
 /*   absolute_path.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olacerda <olacerda@student.42.fr>          +#+  +:+       +#+        */
+/*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 02:53:45 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/13 07:49:57 by olacerda         ###   ########.fr       */
+/*   Updated: 2026/03/25 06:46:36 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <core_execution.h>
 
-int	is_accessible(char *path, char *comand)
+int	parse_path(char *path)
 {
-	int	result;
+	int	index;
 
-	if (!path || !comand)
+	if (!path)
 		return (0);
-	result = 0;
-	result = access((const char *)path, X_OK);
-	if (result == 0)
-		return (1);
-	return (0);
+	index = 0;
+	if (path[index] == '\0')
+		return (false);
+	if (path[index] == '.')
+	{
+		index++;
+		if (path[index] == '\0')
+			return (false);
+		if (path[index] == '.')
+		{
+			index++;
+			if (path[index] == '\0')
+				return (false);
+		}
+	}
+	return (true);
 }
 
-int	get_next_path(char *path, char *environment_variable, int env_idx, int path_buffer_size)
+int	get_next_path(char *path, char *env_var, int env_idx, int path_buffer_size)
 {
 	int	index;
 
 	index = 0;
-	if (!path || !environment_variable || !env_idx)
+	if (!path || !env_var || !env_idx)
 		return (0);
-	while ((environment_variable[env_idx]) && (index < (path_buffer_size - 1)) && (environment_variable[env_idx] != ':'))
+	while ((env_var[env_idx]) && (index < (path_buffer_size - 1))
+		&& (env_var[env_idx] != ':'))
 	{
-		path[index] = environment_variable[env_idx];
+		path[index] = env_var[env_idx];
 		index++;
 		env_idx++;
 	}
@@ -64,53 +76,56 @@ int	append_comand(char *path, char *comand, int path_idx, int path_buffer_size)
 	return (1);
 }
 
-char *find_abs_path(char *environment_variable, char *comand, int prefix_size, char *path)
+char	*find_abs_path(char *env_path, char *comand, int pfx_size, char *buff)
 {
-	int			env_size;
-	int			env_idx;
-	int			path_size;
-	
-	if (!string_zero(path, PATH_MAX) || !environment_variable || !comand || !prefix_size)
+	int	env_path_size;
+	int	path_idx;
+	int	path_size;
+
+	if (!env_path || !comand || !pfx_size)
 		return (NULL);
-	env_size = string_length(environment_variable);
-	env_idx = prefix_size;
+	string_zero(buff, PATH_MAX);
+	env_path_size = string_length(env_path);
+	path_idx = pfx_size;
 	path_size = 0;
-	if (!env_size || env_size <= prefix_size)
+	if (!env_path_size || env_path_size <= pfx_size)
 		return (NULL);
-	while ((env_idx < env_size) && environment_variable[env_idx])
+	while ((path_idx < env_path_size) && env_path[path_idx])
 	{
-		path_size = get_next_path(path, environment_variable, env_idx, PATH_MAX);
-		if (append_comand(path, comand, path_size, PATH_MAX) == false)
+		path_size = get_next_path(buff, env_path, path_idx, PATH_MAX);
+		if (append_comand(buff, comand, path_size, PATH_MAX) == false)
 			return (NULL);
-		if (is_accessible(path, comand) == true)
-			return (path);
-		env_idx += path_size;
-		if (environment_variable[env_idx] == ':')
-			env_idx++;
+		if (is_accessible(buff) == true)
+			return (buff);
+		path_idx += path_size;
+		if (env_path[path_idx] == ':')
+			path_idx++;
 	}
 	return (NULL);
 }
 
-char *get_absolute_path(char *prefix, char *comand, char **envp, char *buffer)
+char	*get_absolute_path(char *prefix, char *cmd, char **envp, char *buffer)
 {
-	char *environment_variable;
-	char *absolute_path;
-	int	prefix_size;
+	char	*env_path;
+	char	*absolute_path;
+	int		prefix_size;
 
-	if (!prefix || !comand || !envp)
+	if (!prefix || !cmd || !envp)
 		return (NULL);
-	if (is_accessible(comand, comand) == true)
-		return (comand);
-	if (is_redirection(comand))
+	if (is_redirection(cmd) || ((cmd[0] == '.') && !cmd[1]))
 		return (NULL);
-	environment_variable = NULL;
+	if (!(*cmd) || ((cmd[0] == '.') && (cmd[1] == '.') && !cmd[2]))
+		return (NULL);
+	if (is_accessible(cmd) == true)
+		return (cmd);
+	env_path = NULL;
 	absolute_path = NULL;
 	prefix_size = string_length(prefix);
 	if (!prefix_size)
 		return (NULL);
-	environment_variable = env_find_pointer(prefix, envp);
-	if (!environment_variable)
+	env_path = env_find_pointer(prefix, envp);
+	if (!env_path)
 		return (NULL);
-	absolute_path = find_abs_path(environment_variable, comand, prefix_size, buffer);
+	absolute_path = find_abs_path(env_path, cmd, prefix_size, buffer);
 	return (absolute_path);
 }

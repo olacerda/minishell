@@ -6,7 +6,7 @@
 /*   By: otlacerd <otlacerd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 12:22:13 by otlacerd          #+#    #+#             */
-/*   Updated: 2026/03/13 19:19:02 by otlacerd         ###   ########.fr       */
+/*   Updated: 2026/03/25 06:43:21 by otlacerd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,9 @@ int	redir_out(t_redir *redir, int fds[2])
 {
 	int	fd;
 
-	if (!redir || !fds || !(redir->redir_arg))
+	if (!redir || !fds)
 		return (-1);
-	if (access(redir->redir_arg, R_OK | W_OK) == FAIL)
-		unlink(redir->redir_arg);
-	fd = open (redir->redir_arg, O_WRONLY | O_CREAT | O_TRUNC, 0744);
+	fd = open(redir->redir_arg, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd < 0)
 		return (perror(redir->redir_arg), 0);
 	dup2(fd, fds[1]);
@@ -48,7 +46,7 @@ int	redir_append(t_redir *redir, int fds[2])
 
 	if (!redir || !fds)
 		return (-1);
-	fd = open (redir->redir_arg, O_WRONLY | O_CREAT | O_APPEND, 0744);
+	fd = open(redir->redir_arg, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (fd < 0)
 		return (perror(redir->redir_arg), 0);
 	dup2(fd, fds[1]);
@@ -56,20 +54,19 @@ int	redir_append(t_redir *redir, int fds[2])
 	return (1);
 }
 
-int	redir_heredoc(t_redir *redir, int fds[2], char **temps, int count)
+int	redir_heredoc(t_redir *redir, int fds[2], t_hdoc *heredoc)
 {
-	static int	fd;
-	static int	index;
- 
-	if (!fds || !redir)
+	int		fd;
+	char	**temps;
+
+	if (!fds || !redir || !heredoc || (heredoc->index >= heredoc->count))
 		return (FAIL);
-	if (index >= count)
-		index = 0;
-	fd = open(temps[index], O_RDONLY);
+	temps = heredoc->temps;
+	fd = open(temps[heredoc->index], O_RDONLY);
 	if (fd < 0)
-		return (perror(temps[index]), 0);
+		return (perror(temps[heredoc->index]), 0);
 	dup2(fd, fds[0]);
 	close(fd);
-	index++;
+	heredoc->index++;
 	return (true);
 }
